@@ -15,6 +15,15 @@
 
 using namespace DriveConstants;
 
+std::optional<frc::Rotation3d> GetRotation3D(studica::Navx &navX) {
+  frc::Rotation3d rotation;
+  if (navX.GetRotation3D(rotation) == 0) {
+    return rotation;
+  } else {
+    return {};
+  }
+}
+
 DriveSubsystem::DriveSubsystem() :
     SubsystemBase("Drive Subsystem"),
     frontLeftModule{
@@ -29,8 +38,8 @@ DriveSubsystem::DriveSubsystem() :
     rearRightModule{
       new RevSwerveModule(kRearRightDriveMotorCanID, kRearRightSteerMotorCanID, kRearRightSteerOffset)
     },
-    m_ahrs{studica::AHRS::NavXComType::kMXP_SPI},
-    m_poseEstimator{kDriveKinematics, m_ahrs.GetRotation3d(), GetModulePositions(), frc::Pose3d()},
+    m_navX{0},
+    m_poseEstimator{kDriveKinematics, GetRotation3D(m_navX).value_or(frc::Rotation3d()), GetModulePositions(), frc::Pose3d()},
     m_xController{TranslationPID::kP, TranslationPID::kI, TranslationPID::kD},
     m_yController{TranslationPID::kP, TranslationPID::kI, TranslationPID::kD},
     m_rController{OrientationPID::kP, OrientationPID::kI, OrientationPID::kD},
@@ -95,7 +104,7 @@ DriveSubsystem::DriveSubsystem() :
 }
 
 void DriveSubsystem::Periodic() {
-  frc::Rotation3d heading = m_ahrs.GetRotation3d();
+  frc::Rotation3d heading = GetRotation3D(m_navX).value_or(frc::Rotation3d());
 
   frc::Pose3d pose = m_poseEstimator.Update(heading, GetModulePositions());
 

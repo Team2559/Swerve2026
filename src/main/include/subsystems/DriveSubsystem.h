@@ -15,7 +15,7 @@
 #include <frc2/command/CommandPtr.h>
 #include <frc2/command/SubsystemBase.h>
 #include <networktables/GenericEntry.h>
-#include <studica/AHRS.h>
+#include <studica/Navx.h>
 #include <units/angular_velocity.h>
 #include <units/length.h>
 #include <units/velocity.h>
@@ -135,7 +135,7 @@ private:
   std::unique_ptr<SwerveModule> rearRightModule;
 
   // The navX gyro sensor.
-  studica::AHRS m_ahrs;
+  studica::Navx m_navX;
 
   // Pose estimator combines odometry with vision readings to yield an accurate robot pose; 4 specifies the number of modules.
   frc::SwerveDrivePoseEstimator3d<4> m_poseEstimator;
