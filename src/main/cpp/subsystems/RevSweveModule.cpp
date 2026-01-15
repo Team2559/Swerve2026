@@ -35,7 +35,7 @@ RevSwerveModule::RevSwerveModule(int driveCanID, int steerCanID, units::angle::t
       .VelocityConversionFactor(kDriveDistancePerRotation.value() * (1.0_s / 1.0_min));
 
     driveConfig.closedLoop
-      .SetFeedbackSensor(ClosedLoopConfig::FeedbackSensor::kPrimaryEncoder)
+      .SetFeedbackSensor(FeedbackSensor::kPrimaryEncoder)
       .Pid(DrivePID::kP, DrivePID::kI, DrivePID::kD);
     driveVff = DrivePID::kV;
 
@@ -59,7 +59,7 @@ RevSwerveModule::RevSwerveModule(int driveCanID, int steerCanID, units::angle::t
       .VelocityConversionFactor(kSteerFeedbackScale * (1.0_s / 1.0_min));
 
     steerConfig.closedLoop
-      .SetFeedbackSensor(ClosedLoopConfig::FeedbackSensor::kAbsoluteEncoder)
+      .SetFeedbackSensor(FeedbackSensor::kAbsoluteEncoder)
       .PositionWrappingEnabled(true)
       .PositionWrappingInputRange(-0.5 * kSteerFeedbackScale, 0.5 * kSteerFeedbackScale)
       .Pid(SteerPID::kP, SteerPID::kI, SteerPID::kD);
@@ -117,7 +117,8 @@ inline void BuildPIDConfig(SparkFlexConfig &config, const PIDUpdate &update) {
       config.closedLoop.D(update.value, slot);
       break;
     case PIDUpdate::PIDTerm::kFF:
-      config.closedLoop.VelocityFF(update.value, slot);
+      // TODO: Make for flexible?
+      config.closedLoop.feedForward.kV(update.value, slot);
       break;
   }
 }
@@ -129,13 +130,13 @@ void RevSwerveModule::UpdateDrivePID(PIDUpdate &update) {
   }
   SparkFlexConfig config;
   BuildPIDConfig(config, update);
-  driveMotor.Configure(config, SparkFlex::ResetMode::kNoResetSafeParameters, SparkFlex::PersistMode::kNoPersistParameters);
+  driveMotor.Configure(config, rev::ResetMode::kNoResetSafeParameters, rev::PersistMode::kNoPersistParameters);
 }
 
 void RevSwerveModule::UpdateSteerPID(PIDUpdate &update) {
   SparkFlexConfig config;
   BuildPIDConfig(config, update);
-  steerMotor.Configure(config, SparkFlex::ResetMode::kNoResetSafeParameters, SparkFlex::PersistMode::kNoPersistParameters);
+  steerMotor.Configure(config, rev::ResetMode::kNoResetSafeParameters, rev::PersistMode::kNoPersistParameters);
 }
 
 bool RevSwerveModule::GetStatus() const {
@@ -148,7 +149,7 @@ void RevSwerveModule::SetSteerOffset(units::angle::turn_t offset) {
 
   steerConfig.absoluteEncoder.ZeroOffset(wrapOffset(offset).value());
 
-  steerMotor.Configure(steerConfig, SparkFlex::ResetMode::kNoResetSafeParameters, SparkFlex::PersistMode::kNoPersistParameters);
+  steerMotor.Configure(steerConfig, rev::ResetMode::kNoResetSafeParameters, rev::PersistMode::kNoPersistParameters);
 }
 
 units::angle::turn_t RevSwerveModule::GetSteerPosition() {
@@ -156,7 +157,7 @@ units::angle::turn_t RevSwerveModule::GetSteerPosition() {
 }
 
 void RevSwerveModule::SetSteerPosition(units::angle::turn_t position) {
-  steerMotor.GetClosedLoopController().SetReference(position.value() * kSteerFeedbackScale, SparkFlex::ControlType::kPosition);
+  steerMotor.GetClosedLoopController().SetSetpoint(position.value() * kSteerFeedbackScale, SparkFlex::ControlType::kPosition);
 }
 
 void RevSwerveModule::StopSteer() {
@@ -164,7 +165,7 @@ void RevSwerveModule::StopSteer() {
 }
 
 void RevSwerveModule::SetDriveVelocity(units::velocity::meters_per_second_t velocity) {
-  driveMotor.GetClosedLoopController().SetReference(velocity.value(), SparkFlex::ControlType::kVelocity, {}, velocity.value() * driveVff);
+  driveMotor.GetClosedLoopController().SetSetpoint(velocity.value(), SparkFlex::ControlType::kVelocity, {}, velocity.value() * driveVff);
 
   if (nt_driveOutput.has_value()) {
     nt_driveOutput.value()->SetDoubleArray(std::array{velocity.value(), driveEncoder.GetVelocity(), driveMotor.GetAppliedOutput()});
