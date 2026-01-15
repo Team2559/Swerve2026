@@ -6,6 +6,7 @@
 
 #include <frc/apriltag/AprilTagFieldLayout.h>
 #include <frc/geometry/Transform3d.h>
+#include <frc/system/plant/DCMotor.h>
 #include <units/angle.h>
 #include <units/angular_velocity.h>
 #include <units/constants.h>
@@ -28,11 +29,6 @@ namespace OperatorConstants {
   inline constexpr int kDriverControllerPort = 0;
 
 } // namespace OperatorConstants
-
-namespace MotorConstants {
-  // Speed constant for a Neo Vortex, in turns per second per volt
-  constexpr units::unit_t<units::compound_unit<units::turns_per_second, units::inverse<units::volt>>> kVNeoVortex = 6784_rpm / 12.0_V;
-} // namespace MotorConstants
 
 namespace DriveConstants {
   // Drivebase geometry: distance between centers of right and left wheels on
@@ -74,7 +70,7 @@ namespace DriveConstants {
   // This is an upper bound, for various reasons. It needs to be empirically
   // measured. Half of theoretical free speed is a reasonable starting value
   // (since something in the ballpark is needed here in order to to drive).
-  constexpr units::meters_per_second_t kMaxDriveSpeed = 6895_rpm * kDriveDistancePerRotation;
+  constexpr units::meters_per_second_t kMaxDriveSpeed = 6894_rpm * kDriveDistancePerRotation;
   constexpr double kSlowDrivePercent = 0.80;
 
   inline constexpr double kSteerGearRatio = 50.0 / 16.0 * 60.0 / 10.0; // 18.75
@@ -116,12 +112,17 @@ namespace DriveConstants {
   constexpr bool kSteerMotorInverted = true;
   constexpr bool kSteerSensorInverted = false;
 
+  constexpr frc::DCMotor driveMotorPlant = frc::DCMotor::KrakenX60();
+  constexpr frc::DCMotor steerMotorPlant = frc::DCMotor::NEO();
+
   // Closed loop feedback parameters for module drive speed
   namespace DrivePID {
-    constexpr double kP = 0.2;
+    constexpr double kP = 0.3;
     constexpr double kI = 0.0;
     constexpr double kD = 0.006;
-    constexpr double kV = (1.0 / MotorConstants::kVNeoVortex / kDriveDistancePerRotation).value();
+    constexpr double kS = 0.0;
+    constexpr double kV = (1.0 / driveMotorPlant.Kv).value();
+    constexpr double kA = 0.0;
   } // namespace DrivePID
 
   // Steer encoder units are scaled for more responsive PID feedback
@@ -137,7 +138,7 @@ namespace DriveConstants {
 
   // Closed loop feedback for chassis translation
   namespace TranslationPID {
-    constexpr double kP = 1.5;
+    constexpr double kP = 1.4;
     constexpr double kI = 0.0;
     constexpr double kD = 0.0;
   } // namespace TranslationPID

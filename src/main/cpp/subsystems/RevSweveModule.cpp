@@ -14,7 +14,7 @@
 using namespace DriveConstants;
 using namespace rev::spark;
 
-units::turn_t wrapOffset(units::turn_t value) {
+static units::turn_t wrapOffset(units::turn_t value) {
   return value - units::math::floor(value);
 }
 

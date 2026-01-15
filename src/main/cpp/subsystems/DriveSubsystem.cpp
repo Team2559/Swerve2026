@@ -11,7 +11,7 @@
 #include <frc2/command/button/RobotModeTriggers.h>
 
 #include "Constants.h"
-#include "subsystems/RevSwerveModule.h"
+#include "subsystems/TalonSparkSwerveModule.h"
 
 using namespace DriveConstants;
 
@@ -27,16 +27,16 @@ std::optional<frc::Rotation3d> GetRotation3D(studica::Navx &navX) {
 DriveSubsystem::DriveSubsystem() :
     SubsystemBase("Drive Subsystem"),
     frontLeftModule{
-      new RevSwerveModule(kFrontLeftDriveMotorCanID, kFrontLeftSteerMotorCanID, kFrontLeftSteerOffset)
+      new TalonSparkSwerveModule(kFrontLeftDriveMotorCanID, kFrontLeftSteerMotorCanID, kFrontLeftSteerOffset)
     },
     frontRightModule{
-      new RevSwerveModule(kFrontRightDriveMotorCanID, kFrontRightSteerMotorCanID, kFrontRightSteerOffset)
+      new TalonSparkSwerveModule(kFrontRightDriveMotorCanID, kFrontRightSteerMotorCanID, kFrontRightSteerOffset)
     },
     rearLeftModule{
-      new RevSwerveModule(kRearLeftDriveMotorCanID, kRearLeftSteerMotorCanID, kRearLeftSteerOffset)
+      new TalonSparkSwerveModule(kRearLeftDriveMotorCanID, kRearLeftSteerMotorCanID, kRearLeftSteerOffset)
     },
     rearRightModule{
-      new RevSwerveModule(kRearRightDriveMotorCanID, kRearRightSteerMotorCanID, kRearRightSteerOffset)
+      new TalonSparkSwerveModule(kRearRightDriveMotorCanID, kRearRightSteerMotorCanID, kRearRightSteerOffset)
     },
     m_navX{0},
     m_poseEstimator{kDriveKinematics, GetRotation3D(m_navX).value_or(frc::Rotation3d()), GetModulePositions(), frc::Pose3d()},
