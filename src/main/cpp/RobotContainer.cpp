@@ -86,26 +86,32 @@ void RobotContainer::ConfigureBindings() {
   // pressed, cancelling on release.
   // m_driverController.B().WhileTrue(m_subsystem.ExampleMethodCommand());
 
-  static auto steerOnlyCommand = frc2::RunCommand([this]() {
-    const auto controls = GetDriveTeleopControls();
+  static auto steerOnlyCommand = frc2::RunCommand(
+    [this]() {
+      const auto controls = GetDriveTeleopControls();
 
-    m_driveSubsystem.SteerTo(
-      std::get<0>(controls) * DriveConstants::kMaxDriveSpeed,
-      std::get<1>(controls) * DriveConstants::kMaxDriveSpeed,
-      std::get<2>(controls) * DriveConstants::kMaxTurnRate,
-      std::get<3>(controls)
-    );
-  },
-                                                  {&m_driveSubsystem});
+      m_driveSubsystem.SteerTo(
+        std::get<0>(controls) * DriveConstants::kMaxDriveSpeed,
+        std::get<1>(controls) * DriveConstants::kMaxDriveSpeed,
+        std::get<2>(controls) * DriveConstants::kMaxTurnRate,
+        std::get<3>(controls)
+      );
+    },
+    {&m_driveSubsystem}
+  );
 
   frc::Shuffleboard::GetTab("Drive").Add("Steer Only", steerOnlyCommand);
 
-  m_driverController.Back().OnTrue(frc2::InstantCommand([this]() {
-                                     m_driveSubsystem.ResetFieldOrientation(m_isRedAlliance);
-                                   },
-                                                        {&m_driveSubsystem})
-                                     .IgnoringDisable(true)
-                                     .WithName("Reset Field Orientation"));
+  m_driverController.Back().OnTrue(
+    frc2::InstantCommand(
+      [this]() {
+        m_driveSubsystem.ResetFieldOrientation(m_isRedAlliance);
+      },
+      {&m_driveSubsystem}
+    )
+      .IgnoringDisable(true)
+      .WithName("Reset Field Orientation")
+  );
 
   m_driverController.Start().ToggleOnTrue(
     frc2::StartEndCommand(
