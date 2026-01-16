@@ -134,6 +134,7 @@ namespace DriveConstants {
     constexpr double kP = 0.8;
     constexpr double kI = 0.0;
     constexpr double kD = 0.03;
+    constexpr double kS = 0.0;
   } // namespace SteerPID
 
   // Closed loop feedback for chassis translation
