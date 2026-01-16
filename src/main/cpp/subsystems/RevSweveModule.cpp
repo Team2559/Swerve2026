@@ -87,7 +87,7 @@ void RevSwerveModule::TestDebug() {
   }
 }
 
-inline void BuildPIDConfig(SparkFlexConfig &config, const PIDUpdate &update) {
+static inline void BuildPIDConfig(SparkFlexConfig &config, const PIDUpdate &update) {
   ClosedLoopSlot slot;
   switch (update.slot) {
     case 0:

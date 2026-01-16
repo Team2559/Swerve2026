@@ -93,7 +93,7 @@ void TalonSparkSwerveModule::TestDebug() {
   }
 }
 
-inline void BuildTalonPIDConfig(ctre::phoenix6::configs::SlotConfigs &config, const PIDUpdate &update) {
+static inline void BuildTalonPIDConfig(ctre::phoenix6::configs::SlotConfigs &config, const PIDUpdate &update) {
 
   switch (update.term) {
     case PIDUpdate::PIDTerm::kP:
@@ -112,7 +112,7 @@ inline void BuildTalonPIDConfig(ctre::phoenix6::configs::SlotConfigs &config, co
   }
 }
 
-inline void BuildSparkMaxPIDConfig(SparkMaxConfig &config, const PIDUpdate &update) {
+static inline void BuildSparkMaxPIDConfig(SparkMaxConfig &config, const PIDUpdate &update) {
   ClosedLoopSlot slot;
   switch (update.slot) {
     case 0:
