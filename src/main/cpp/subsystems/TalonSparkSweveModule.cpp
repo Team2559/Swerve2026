@@ -97,7 +97,6 @@ void TalonSparkSwerveModule::TestDebug() {
 }
 
 static inline void BuildTalonPIDConfig(ctre::phoenix6::configs::SlotConfigs &config, const PIDUpdate &update) {
-
   switch (update.term) {
     case PIDUpdate::PIDTerm::kP:
       config.WithKP(update.value);

@@ -27,17 +27,19 @@ RobotContainer::RobotContainer() :
   // Initialize all of your commands and subsystems here
 
   m_driveSubsystem.SetDefaultCommand(
-    frc2::RunCommand([this]() {
-      const auto controls = GetDriveTeleopControls();
+    frc2::RunCommand(
+      [this]() {
+        const auto controls = GetDriveTeleopControls();
 
-      m_driveSubsystem.Drive(
-        std::get<0>(controls) * DriveConstants::kMaxDriveSpeed,
-        std::get<1>(controls) * DriveConstants::kMaxDriveSpeed,
-        std::get<2>(controls) * DriveConstants::kMaxTurnRate,
-        std::get<3>(controls)
-      );
-    },
-                     {&m_driveSubsystem})
+        m_driveSubsystem.Drive(
+          std::get<0>(controls) * DriveConstants::kMaxDriveSpeed,
+          std::get<1>(controls) * DriveConstants::kMaxDriveSpeed,
+          std::get<2>(controls) * DriveConstants::kMaxTurnRate,
+          std::get<3>(controls)
+        );
+      },
+      {&m_driveSubsystem}
+    )
       .WithName("TeleopDrive")
   );
 
