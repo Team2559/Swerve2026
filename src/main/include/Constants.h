@@ -42,6 +42,9 @@ namespace DriveConstants {
   inline constexpr units::degree_t kRearLeftSteerOffset = 325.6_deg;
   inline constexpr units::degree_t kRearRightSteerOffset = 244.4_deg;
 
+  constexpr frc::DCMotor driveMotorPlant = frc::DCMotor::KrakenX60();
+  constexpr frc::DCMotor steerMotorPlant = frc::DCMotor::NEO();
+
   // SDS Mk3 Standard (or Fast) Gear Ratio: 8.16:1 (or 6.86:1);
   // Nominal Wheel Diameter (4"): =0.1016m;
   // Nominal Wheel Circumference (pi * Diameter): ~0.3192m;
@@ -57,7 +60,7 @@ namespace DriveConstants {
   // Nominal Wheel Circumference (pi * Diameter): ~0.3192m;
   // 0.3192 / 5.90 => ~0.05401.
 
-  inline constexpr double kDriveGearRatio = 50.0 / 16.0 * 17.0 / 27.0 * 45.0 / 15.0; // approx 5.90
+  inline constexpr double kDriveGearRatio = 50.0 / 17.0 * 17.0 / 27.0 * 45.0 / 15.0; // approx 6.75
 
   // This should be empirically determined!  This is just an initial guess.
   // This is used for both distance and velocity control. If this is off, it
@@ -70,10 +73,10 @@ namespace DriveConstants {
   // This is an upper bound, for various reasons. It needs to be empirically
   // measured. Half of theoretical free speed is a reasonable starting value
   // (since something in the ballpark is needed here in order to to drive).
-  constexpr units::meters_per_second_t kMaxDriveSpeed = 6894_rpm * kDriveDistancePerRotation;
+  constexpr units::meters_per_second_t kMaxDriveSpeed = 14.4_V * driveMotorPlant.Kv * kDriveDistancePerRotation;
   constexpr double kSlowDrivePercent = 0.80;
 
-  inline constexpr double kSteerGearRatio = 50.0 / 16.0 * 60.0 / 10.0; // 18.75
+  inline constexpr double kSteerGearRatio = 150.0 / 7.0; // approx 21.43
 
   // This is used for rotating the robot in place, about it's center.  This
   // may need to be empirically adjusted, but check kDriveMetersPerRotation
@@ -111,9 +114,6 @@ namespace DriveConstants {
   constexpr bool kDriveMotorInverted = false;
   constexpr bool kSteerMotorInverted = true;
   constexpr bool kSteerSensorInverted = false;
-
-  constexpr frc::DCMotor driveMotorPlant = frc::DCMotor::KrakenX60();
-  constexpr frc::DCMotor steerMotorPlant = frc::DCMotor::NEO();
 
   // Closed loop feedback parameters for module drive speed
   namespace DrivePID {
@@ -156,7 +156,7 @@ namespace VisionConstants {
   // Camera network name
   constexpr char kName[] = "OV9281";
   // AprilTag field data; FMA events should all use the welded field, but off-season events may use the AndyMark field instead.
-  const frc::AprilTagFieldLayout kAprilTags = frc::AprilTagFieldLayout::LoadField(frc::AprilTagField::k2025ReefscapeWelded);
+  const frc::AprilTagFieldLayout kAprilTags = frc::AprilTagFieldLayout::LoadField(frc::AprilTagField::k2026RebuiltWelded);
   // Camera focal point position and orientation relative to the robot origin
   constexpr frc::Transform3d kRobotToCam = frc::Transform3d(
     frc::Translation3d(0.5_m, 0.0_m, 0.5_m),
