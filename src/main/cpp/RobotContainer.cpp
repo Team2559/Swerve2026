@@ -161,8 +161,8 @@ std::tuple<double, double, double, bool> RobotContainer::GetDriveTeleopControls(
   }
 
   // Rescale final speeds to be more controllable
-  if (m_triggerSpeedEnabled) // scale speed by analog trigger
-  {
+  if (m_triggerSpeedEnabled) {
+    // scale speed by analog trigger
     double RightTrigAnalogVal = m_driverController.GetRightTriggerAxis();
     RightTrigAnalogVal = ConditionRawTriggerInput(RightTrigAnalogVal);
 
@@ -175,8 +175,8 @@ std::tuple<double, double, double, bool> RobotContainer::GetDriveTeleopControls(
         LeftStickY = std::copysign(RightTrigAnalogVal, LeftStickY);
       }
     }
-  } else // scale speed by analog stick
-  {
+  } else {
+    // scale speed by analog stick
     LeftStickX = ConditionRawJoystickInput(LeftStickX);
     LeftStickY = ConditionRawJoystickInput(LeftStickY);
   }
