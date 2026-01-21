@@ -4,10 +4,10 @@
 
 #pragma once
 
+#include <ctre/phoenix6/TalonFX.hpp>
 #include <networktables/GenericEntry.h>
 #include <rev/SparkMax.h>
 
-#include <ctre/phoenix6/TalonFX.hpp>
 #include <string>
 
 #include "SwerveModule.h"
