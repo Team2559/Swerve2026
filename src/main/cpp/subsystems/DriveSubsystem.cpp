@@ -4,11 +4,11 @@
 
 #include "subsystems/DriveSubsystem.h"
 
-#include <frc/shuffleboard/Shuffleboard.h>
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <frc2/command/InstantCommand.h>
 #include <frc2/command/RunCommand.h>
 #include <frc2/command/button/RobotModeTriggers.h>
+#include <networktables/NetworkTableInstance.h>
 
 #include "Constants.h"
 #include "subsystems/TalonSparkSwerveModule.h"
@@ -68,22 +68,23 @@ DriveSubsystem::DriveSubsystem() :
     } {
   const frc::Pose3d initialPose = m_poseEstimator.GetEstimatedPosition();
 
-  frc::ShuffleboardTab &tab = frc::Shuffleboard::GetTab("Drive");
+  auto nt_instance = nt::NetworkTableInstance::GetDefault();
+  auto table = nt_instance.GetTable("Drive");
 
-  frc::ShuffleboardLayout &xLayout = tab.GetLayout("X", frc::BuiltInLayouts::kList);
-  nt_xPosition = xLayout.Add("Position [m]", initialPose.X().value()).GetEntry();
-  nt_xSetpoint = xLayout.Add("Setpoint [m]", 0.0).GetEntry();
-  nt_xOutput = xLayout.Add("Output [mps]", 0.0).GetEntry();
+  auto xTable = table->GetSubTable("X");
+  nt_xPosition = xTable->GetDoubleTopic("Position").GetEntry(initialPose.X().value());
+  nt_xSetpoint = xTable->GetDoubleTopic("Setpoint").GetEntry(0.0);
+  nt_xOutput = xTable->GetDoubleTopic("Output").GetEntry(0.0);
 
-  frc::ShuffleboardLayout &yLayout = tab.GetLayout("Y", frc::BuiltInLayouts::kList);
-  nt_yPosition = yLayout.Add("Position [m]", initialPose.Y().value()).GetEntry();
-  nt_ySetpoint = yLayout.Add("Setpoint [m]", 0.0).GetEntry();
-  nt_yOutput = yLayout.Add("Output [mps]", 0.0).GetEntry();
+  auto yTable = table->GetSubTable("X");
+  nt_yPosition = yTable->GetDoubleTopic("Position").GetEntry(initialPose.Y().value());
+  nt_ySetpoint = yTable->GetDoubleTopic("Setpoint").GetEntry(0.0);
+  nt_yOutput = yTable->GetDoubleTopic("Output").GetEntry(0.0);
 
-  frc::ShuffleboardLayout &rLayout = tab.GetLayout("R", frc::BuiltInLayouts::kList);
-  nt_rPosition = rLayout.Add("Orientation [rad]", initialPose.Rotation().ToRotation2d().Radians().value()).GetEntry();
-  nt_rSetpoint = rLayout.Add("Setpoint [rad]", 0.0).GetEntry();
-  nt_rOutput = rLayout.Add("Output [radps]", 0.0).GetEntry();
+  auto rTable = table->GetSubTable("X");
+  nt_yPosition = rTable->GetDoubleTopic("Position").GetEntry(initialPose.Rotation().ToRotation2d().Radians().value());
+  nt_ySetpoint = rTable->GetDoubleTopic("Setpoint").GetEntry(0.0);
+  nt_yOutput = rTable->GetDoubleTopic("Output").GetEntry(0.0);
 
   // Bind test init and test exit to mode transition
   frc2::RobotModeTriggers::Test()
@@ -110,9 +111,9 @@ void DriveSubsystem::Periodic() {
 
   // TODO: Add Limelight update?
 
-  nt_xPosition->SetDouble(pose.X().value());
-  nt_yPosition->SetDouble(pose.Y().value());
-  nt_rPosition->SetDouble(pose.Rotation().ToRotation2d().Radians().value());
+  nt_xPosition.Set(pose.X().value());
+  nt_yPosition.Set(pose.Y().value());
+  nt_rPosition.Set(pose.Rotation().ToRotation2d().Radians().value());
 
   frc::SmartDashboard::PutNumber("Front left drive", frontLeftModule->GetPosition().distance.value());
   frc::SmartDashboard::PutNumber("Front right drive", frontRightModule->GetPosition().distance.value());
@@ -131,16 +132,11 @@ void DriveSubsystem::SimulationPeriodic() {
 }
 
 void DriveSubsystem::TestInit() {
-  frc::ShuffleboardTab &tab = frc::Shuffleboard::GetTab("Drive");
+  frc::SmartDashboard::PutData("/Drive Setup/PID", &m_driveTuner);
+  frc::SmartDashboard::PutData("/Drive Setup/PID", &m_steerTuner);
 
-  frc::ShuffleboardTab &driveSetupTab = frc::Shuffleboard::GetTab("Drive Setup");
-  frc::ShuffleboardTab &steerSetupTab = frc::Shuffleboard::GetTab("Steer Setup");
-
-  driveSetupTab.Add("PID", m_driveTuner).WithWidget(frc::BuiltInWidgets::kPIDController);
-  steerSetupTab.Add("PID", m_steerTuner).WithWidget(frc::BuiltInWidgets::kPIDController);
-
-  driveSetupTab.Add("Legend", "(Blue) setpoint, (Red) measured, (Green) output");
-  steerSetupTab.Add("Legend", "(Blue) setpoint, (Red) measured, (Green) output");
+  // driveSetupTab.Add("Legend", "(Blue) setpoint, (Red) measured, (Green) output");
+  // steerSetupTab.Add("Legend", "(Blue) setpoint, (Red) measured, (Green) output");
 
   frontLeftModule->TestInit("Front left");
   frontRightModule->TestInit("Front right");
@@ -162,9 +158,9 @@ void DriveSubsystem::ResetFieldOrientation(bool inverted) {
 void DriveSubsystem::Drive(units::meters_per_second_t xSpeed, units::meters_per_second_t ySpeed, units::radians_per_second_t rot, bool fieldRelative, units::meter_t x_center, units::meter_t y_center) {
   frc::Rotation2d heading = GetPose().ToPose2d().Rotation();
 
-  nt_xOutput->SetDouble(xSpeed.value());
-  nt_yOutput->SetDouble(ySpeed.value());
-  nt_rOutput->SetDouble(rot.value());
+  nt_xOutput.Set(xSpeed.value());
+  nt_yOutput.Set(ySpeed.value());
+  nt_rOutput.Set(rot.value());
 
   SetModuleStates(kDriveKinematics.ToSwerveModuleStates(
     fieldRelative ? frc::ChassisSpeeds::FromFieldRelativeSpeeds(xSpeed, ySpeed, rot, heading)
@@ -186,9 +182,9 @@ void DriveSubsystem::FollowTrajectory(const choreo::SwerveSample &sample) {
     m_rController.Calculate(robot_heading.value(), target_heading.value())
   };
 
-  nt_xSetpoint->SetDouble(sample.x.value());
-  nt_ySetpoint->SetDouble(sample.y.value());
-  nt_rSetpoint->SetDouble(sample.heading.value());
+  nt_xSetpoint.Set(sample.x.value());
+  nt_ySetpoint.Set(sample.y.value());
+  nt_rSetpoint.Set(sample.heading.value());
 
   Drive(
     sample.vx + xFeedback,
@@ -205,9 +201,9 @@ void DriveSubsystem::SteerTo(units::meters_per_second_t xSpeed, units::meters_pe
 }
 
 void DriveSubsystem::Stop() {
-  nt_xOutput->SetDouble(0.0);
-  nt_yOutput->SetDouble(0.0);
-  nt_rOutput->SetDouble(0.0);
+  nt_xOutput.Set(0.0);
+  nt_yOutput.Set(0.0);
+  nt_rOutput.Set(0.0);
 
   frontLeftModule->Stop();
   frontRightModule->Stop();

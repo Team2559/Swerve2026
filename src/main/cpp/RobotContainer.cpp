@@ -6,7 +6,6 @@
 
 #include <frc/DriverStation.h>
 #include <frc/livewindow/LiveWindow.h>
-#include <frc/shuffleboard/Shuffleboard.h>
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <frc2/command/InstantCommand.h>
 #include <frc2/command/RunCommand.h>
@@ -46,17 +45,9 @@ RobotContainer::RobotContainer() :
   // Configure the button bindings
   ConfigureBindings();
 
-  nt_fastDriveSpeed =
-    frc::Shuffleboard::GetTab("Drive")
-      .Add("Max Speed", 1.0)
-      .WithWidget(frc::BuiltInWidgets::kNumberSlider)
-      .WithProperties(
-        {// specify widget properties here
-         {"min", nt::Value::MakeDouble(0.0)},
-         {"max", nt::Value::MakeDouble(1.0)}
-        }
-      )
-      .GetEntry();
+  nt::NetworkTableInstance nt_instance = nt::NetworkTableInstance::GetDefault();
+
+  nt_fastDriveSpeed = nt_instance.GetDoubleTopic("/Drive/Max Speed").GetEntry(1.0);
 
   frc2::RobotModeTriggers::Disabled().OnFalse(
     frc2::InstantCommand([this]() {
@@ -72,8 +63,9 @@ RobotContainer::RobotContainer() :
     }).WithName("InitializeVision")
   );
 
-  frc::Shuffleboard::GetTab("LiveWindow")
-    .AddBoolean("Live Window Enabled", frc::LiveWindow::IsEnabled);
+  // frc::Shuffleboard::GetTab("LiveWindow")
+  //   .AddBoolean("Live Window Enabled", frc::LiveWindow::IsEnabled);
+  // TODO: Remove shuffleboard so it works with elastic
 }
 
 void RobotContainer::ConfigureBindings() {
@@ -102,7 +94,7 @@ void RobotContainer::ConfigureBindings() {
     {&m_driveSubsystem}
   );
 
-  frc::Shuffleboard::GetTab("Drive").Add("Steer Only", steerOnlyCommand);
+  frc::SmartDashboard::PutData("/Drive/Steer Only", &steerOnlyCommand);
 
   m_driverController.Back().OnTrue(
     frc2::InstantCommand(
@@ -157,7 +149,7 @@ std::tuple<double, double, double, bool> RobotContainer::GetDriveTeleopControls(
     LeftStickX *= DriveConstants::kSlowDrivePercent;
     LeftStickY *= DriveConstants::kSlowDrivePercent;
   } else {
-    double fastDrivePercent = nt_fastDriveSpeed->GetDouble(1.0);
+    double fastDrivePercent = nt_fastDriveSpeed.Get(1.0);
     LeftStickX *= fastDrivePercent;
     LeftStickY *= fastDrivePercent;
   }

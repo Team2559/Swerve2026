@@ -14,7 +14,7 @@
 #include <frc/smartdashboard/Field2d.h>
 #include <frc2/command/CommandPtr.h>
 #include <frc2/command/SubsystemBase.h>
-#include <networktables/GenericEntry.h>
+#include <networktables/DoubleTopic.h>
 #include <studica/Navx.h>
 #include <units/angular_velocity.h>
 #include <units/length.h>
@@ -152,15 +152,15 @@ private:
   // Dashboard logging entries
   // -----------------------------------
 
-  nt::GenericEntry *nt_xPosition;
-  nt::GenericEntry *nt_xSetpoint;
-  nt::GenericEntry *nt_xOutput;
+  nt::DoubleEntry nt_xPosition;
+  nt::DoubleEntry nt_xSetpoint;
+  nt::DoubleEntry nt_xOutput;
 
-  nt::GenericEntry *nt_yPosition;
-  nt::GenericEntry *nt_ySetpoint;
-  nt::GenericEntry *nt_yOutput;
+  nt::DoubleEntry nt_yPosition;
+  nt::DoubleEntry nt_ySetpoint;
+  nt::DoubleEntry nt_yOutput;
 
-  nt::GenericEntry *nt_rPosition;
-  nt::GenericEntry *nt_rSetpoint;
-  nt::GenericEntry *nt_rOutput;
+  nt::DoubleEntry nt_rPosition;
+  nt::DoubleEntry nt_rSetpoint;
+  nt::DoubleEntry nt_rOutput;
 };

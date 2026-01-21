@@ -7,7 +7,7 @@
 #include <frc/smartdashboard/SendableChooser.h>
 #include <frc2/command/CommandPtr.h>
 #include <frc2/command/button/CommandXboxController.h>
-#include <networktables/GenericEntry.h>
+#include <networktables/DoubleTopic.h>
 
 #include <tuple>
 
@@ -36,7 +36,7 @@ private:
   };
 
   // Configurable top drive speed over a driver station dashboard
-  nt::GenericEntry *nt_fastDriveSpeed;
+  nt::DoubleEntry nt_fastDriveSpeed;
 
   // Drive control mode flags for holonomic drivetrains (like swerve)
   bool m_fieldOriented = true;
