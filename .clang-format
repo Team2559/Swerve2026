@@ -15,7 +15,7 @@ IncludeCategories:
     Priority:        2
     SortPriority:    0
     CaseSensitive:   false
-  - Regex:           '^<.*\.h>'
+  - Regex:           '^<.*\.h(pp)?>'
     Priority:        1
     SortPriority:    0
     CaseSensitive:   false
