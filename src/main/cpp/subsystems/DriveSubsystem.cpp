@@ -69,22 +69,34 @@ DriveSubsystem::DriveSubsystem() :
   const frc::Pose3d initialPose = m_poseEstimator.GetEstimatedPosition();
 
   auto nt_instance = nt::NetworkTableInstance::GetDefault();
-  auto table = nt_instance.GetTable("Drive");
+  auto table = nt_instance.GetTable("SmartDashboard/Drive");
 
   auto xTable = table->GetSubTable("X");
-  nt_xPosition = xTable->GetDoubleTopic("Position").GetEntry(initialPose.X().value());
-  nt_xSetpoint = xTable->GetDoubleTopic("Setpoint").GetEntry(0.0);
-  nt_xOutput = xTable->GetDoubleTopic("Output").GetEntry(0.0);
+  nt_xPosition = xTable->GetDoubleTopic("Position").Publish();
+  nt_xSetpoint = xTable->GetDoubleTopic("Setpoint").Publish();
+  nt_xOutput = xTable->GetDoubleTopic("Output").Publish();
 
-  auto yTable = table->GetSubTable("X");
-  nt_yPosition = yTable->GetDoubleTopic("Position").GetEntry(initialPose.Y().value());
-  nt_ySetpoint = yTable->GetDoubleTopic("Setpoint").GetEntry(0.0);
-  nt_yOutput = yTable->GetDoubleTopic("Output").GetEntry(0.0);
+  nt_xPosition.SetDefault(initialPose.X().value());
+  nt_xSetpoint.SetDefault(0.0);
+  nt_xOutput.SetDefault(0.0);
 
-  auto rTable = table->GetSubTable("X");
-  nt_yPosition = rTable->GetDoubleTopic("Position").GetEntry(initialPose.Rotation().ToRotation2d().Radians().value());
-  nt_ySetpoint = rTable->GetDoubleTopic("Setpoint").GetEntry(0.0);
-  nt_yOutput = rTable->GetDoubleTopic("Output").GetEntry(0.0);
+  auto yTable = table->GetSubTable("Y");
+  nt_yPosition = yTable->GetDoubleTopic("Position").Publish();
+  nt_ySetpoint = yTable->GetDoubleTopic("Setpoint").Publish();
+  nt_yOutput = yTable->GetDoubleTopic("Output").Publish();
+
+  nt_yPosition.SetDefault(initialPose.Y().value());
+  nt_ySetpoint.SetDefault(0.0);
+  nt_yOutput.SetDefault(0.0);
+
+  auto rTable = table->GetSubTable("R");
+  nt_rPosition = rTable->GetDoubleTopic("Position").Publish();
+  nt_rSetpoint = rTable->GetDoubleTopic("Setpoint").Publish();
+  nt_rOutput = rTable->GetDoubleTopic("Output").Publish();
+
+  nt_rPosition.SetDefault(initialPose.Rotation().ToRotation2d().Radians().value());
+  nt_rSetpoint.SetDefault(0.0);
+  nt_rOutput.SetDefault(0.0);
 
   // Bind test init and test exit to mode transition
   frc2::RobotModeTriggers::Test()
@@ -132,8 +144,8 @@ void DriveSubsystem::SimulationPeriodic() {
 }
 
 void DriveSubsystem::TestInit() {
-  frc::SmartDashboard::PutData("/Drive Setup/PID", &m_driveTuner);
-  frc::SmartDashboard::PutData("/Drive Setup/PID", &m_steerTuner);
+  frc::SmartDashboard::PutData("Drive Setup/PID", &m_driveTuner);
+  frc::SmartDashboard::PutData("Drive Setup/PID", &m_steerTuner);
 
   // driveSetupTab.Add("Legend", "(Blue) setpoint, (Red) measured, (Green) output");
   // steerSetupTab.Add("Legend", "(Blue) setpoint, (Red) measured, (Green) output");

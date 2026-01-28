@@ -36,7 +36,7 @@ private:
   };
 
   // Configurable top drive speed over a driver station dashboard
-  nt::DoubleEntry nt_fastDriveSpeed;
+  nt::DoubleSubscriber nt_fastDriveSpeed;
 
   // Drive control mode flags for holonomic drivetrains (like swerve)
   bool m_fieldOriented = true;

@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include <networktables/DoubleArrayTopic.h>
 #include <rev/SparkFlex.h>
 
 #include <string>
@@ -50,6 +51,6 @@ private:
   rev::spark::SparkRelativeEncoder driveEncoder;
   rev::spark::SparkAbsoluteEncoder steerEncoder;
 
-  std::optional<nt::GenericEntry *> nt_driveOutput = {};
-  std::optional<nt::GenericEntry *> nt_steerOutput = {};
+  std::optional<nt::DoubleArrayPublisher> nt_driveOutput = {};
+  std::optional<nt::DoubleArrayPublisher> nt_steerOutput = {};
 };

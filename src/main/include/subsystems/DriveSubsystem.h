@@ -152,15 +152,15 @@ private:
   // Dashboard logging entries
   // -----------------------------------
 
-  nt::DoubleEntry nt_xPosition;
-  nt::DoubleEntry nt_xSetpoint;
-  nt::DoubleEntry nt_xOutput;
+  nt::DoublePublisher nt_xPosition;
+  nt::DoublePublisher nt_xSetpoint;
+  nt::DoublePublisher nt_xOutput;
 
-  nt::DoubleEntry nt_yPosition;
-  nt::DoubleEntry nt_ySetpoint;
-  nt::DoubleEntry nt_yOutput;
+  nt::DoublePublisher nt_yPosition;
+  nt::DoublePublisher nt_ySetpoint;
+  nt::DoublePublisher nt_yOutput;
 
-  nt::DoubleEntry nt_rPosition;
-  nt::DoubleEntry nt_rSetpoint;
-  nt::DoubleEntry nt_rOutput;
+  nt::DoublePublisher nt_rPosition;
+  nt::DoublePublisher nt_rSetpoint;
+  nt::DoublePublisher nt_rOutput;
 };

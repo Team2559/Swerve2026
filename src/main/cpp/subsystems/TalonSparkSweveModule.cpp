@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-#include <frc/shuffleboard/Shuffleboard.h>
+#include <networktables/NetworkTableInstance.h>
 #include <rev/config/SparkMaxConfig.h>
 #include <wpi/sendable/Sendable.h>
 
@@ -78,11 +78,16 @@ TalonSparkSwerveModule::TalonSparkSwerveModule(int driveCanID, int steerCanID, u
 }
 
 void TalonSparkSwerveModule::TestInit(std::string name) {
-  frc::ShuffleboardTab &driveSetupTab = frc::Shuffleboard::GetTab("Drive Setup");
-  frc::ShuffleboardTab &steerSetupTab = frc::Shuffleboard::GetTab("Steer Setup");
+  auto nt_instance = nt::NetworkTableInstance::GetDefault();
 
-  nt_driveOutput = driveSetupTab.Add(name, std::array{0.0, 0.0, 0.0}).WithWidget(frc::BuiltInWidgets::kGraph).GetEntry();
-  nt_steerOutput = steerSetupTab.Add(name, std::array{0.0, 0.0, 0.0}).WithWidget(frc::BuiltInWidgets::kGraph).GetEntry();
+  auto driveSetupTable = nt_instance.GetTable("SmartDashboard/Drive Setup");
+  auto steerSetupTable = nt_instance.GetTable("SmartDashboard/Steer Setup");
+
+  nt_driveOutput = driveSetupTable->GetDoubleArrayTopic(name).Publish();
+  nt_steerOutput = steerSetupTable->GetDoubleArrayTopic(name).Publish();
+
+  nt_driveOutput.value().SetDefault(std::array{0.0, 0.0, 0.0});
+  nt_steerOutput.value().SetDefault(std::array{0.0, 0.0, 0.0});
 }
 
 void TalonSparkSwerveModule::TestExit() {
@@ -92,7 +97,7 @@ void TalonSparkSwerveModule::TestExit() {
 
 void TalonSparkSwerveModule::TestDebug() {
   if (nt_driveOutput.has_value()) {
-    nt_driveOutput.value()->SetDoubleArray(std::array{1.0, 2.0, 3.0});
+    nt_driveOutput.value().Set(std::array{1.0, 2.0, 3.0});
   }
 }
 
@@ -207,7 +212,7 @@ void TalonSparkSwerveModule::SetDriveVelocity(units::velocity::meters_per_second
   driveMotor.SetControl(ctre::phoenix6::controls::VelocityVoltage(velocity / kDriveDistancePerRotation));
 
   if (nt_driveOutput.has_value()) {
-    nt_driveOutput.value()->SetDoubleArray(std::array{velocity.value(), (driveVelocity() * kDriveDistancePerRotation).value(), driveMotor.GetMotorVoltage().GetValue().value()});
+    nt_driveOutput.value().Set(std::array{velocity.value(), (driveVelocity() * kDriveDistancePerRotation).value(), driveMotor.GetMotorVoltage().GetValue().value()});
   }
 }
 
@@ -215,7 +220,7 @@ void TalonSparkSwerveModule::SetDrivePercent(double percent) {
   driveMotor.Set(percent);
 
   if (nt_driveOutput.has_value()) {
-    nt_driveOutput.value()->SetDoubleArray(std::array{0.0, (driveVelocity() * kDriveDistancePerRotation).value(), driveMotor.GetMotorVoltage().GetValue().value()});
+    nt_driveOutput.value().Set(std::array{0.0, (driveVelocity() * kDriveDistancePerRotation).value(), driveMotor.GetMotorVoltage().GetValue().value()});
   }
 }
 
@@ -223,7 +228,7 @@ void TalonSparkSwerveModule::StopDrive() {
   driveMotor.StopMotor();
 
   if (nt_driveOutput.has_value()) {
-    nt_driveOutput.value()->SetDoubleArray(std::array{0.0, (driveVelocity() * kDriveDistancePerRotation).value(), driveMotor.GetMotorVoltage().GetValue().value()});
+    nt_driveOutput.value().Set(std::array{0.0, (driveVelocity() * kDriveDistancePerRotation).value(), driveMotor.GetMotorVoltage().GetValue().value()});
   }
 }
 

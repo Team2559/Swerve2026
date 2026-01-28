@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-#include <frc/shuffleboard/Shuffleboard.h>
+#include <networktables/NetworkTableInstance.h>
 #include <rev/config/SparkFlexConfig.h>
 #include <wpi/sendable/Sendable.h>
 
@@ -69,11 +69,16 @@ RevSwerveModule::RevSwerveModule(int driveCanID, int steerCanID, units::angle::t
 }
 
 void RevSwerveModule::TestInit(std::string name) {
-  frc::ShuffleboardTab &driveSetupTab = frc::Shuffleboard::GetTab("Drive Setup");
-  frc::ShuffleboardTab &steerSetupTab = frc::Shuffleboard::GetTab("Steer Setup");
+  auto nt_instance = nt::NetworkTableInstance::GetDefault();
 
-  nt_driveOutput = driveSetupTab.Add(name, std::array{0.0, 0.0, 0.0}).WithWidget(frc::BuiltInWidgets::kGraph).GetEntry();
-  nt_steerOutput = steerSetupTab.Add(name, std::array{0.0, 0.0, 0.0}).WithWidget(frc::BuiltInWidgets::kGraph).GetEntry();
+  auto driveSetupTable = nt_instance.GetTable("SmartDashboard/Drive Setup");
+  auto steerSetupTable = nt_instance.GetTable("SmartDashboard/Steer Setup");
+
+  nt_driveOutput = driveSetupTable->GetDoubleArrayTopic(name).Publish();
+  nt_steerOutput = steerSetupTable->GetDoubleArrayTopic(name).Publish();
+
+  nt_driveOutput.value().SetDefault(std::array{0.0, 0.0, 0.0});
+  nt_steerOutput.value().SetDefault(std::array{0.0, 0.0, 0.0});
 }
 
 void RevSwerveModule::TestExit() {
@@ -83,7 +88,7 @@ void RevSwerveModule::TestExit() {
 
 void RevSwerveModule::TestDebug() {
   if (nt_driveOutput.has_value()) {
-    nt_driveOutput.value()->SetDoubleArray(std::array{1.0, 2.0, 3.0});
+    nt_driveOutput.value().Set(std::array{1.0, 2.0, 3.0});
   }
 }
 
@@ -168,7 +173,7 @@ void RevSwerveModule::SetDriveVelocity(units::velocity::meters_per_second_t velo
   driveMotor.GetClosedLoopController().SetSetpoint(velocity.value(), SparkFlex::ControlType::kVelocity, {}, velocity.value() * driveVff);
 
   if (nt_driveOutput.has_value()) {
-    nt_driveOutput.value()->SetDoubleArray(std::array{velocity.value(), driveEncoder.GetVelocity(), driveMotor.GetAppliedOutput()});
+    nt_driveOutput.value().Set(std::array{velocity.value(), driveEncoder.GetVelocity(), driveMotor.GetAppliedOutput()});
   }
 }
 
@@ -176,7 +181,7 @@ void RevSwerveModule::SetDrivePercent(double percent) {
   driveMotor.Set(percent);
 
   if (nt_driveOutput.has_value()) {
-    nt_driveOutput.value()->SetDoubleArray(std::array{0.0, driveEncoder.GetVelocity(), driveMotor.GetAppliedOutput()});
+    nt_driveOutput.value().Set(std::array{0.0, driveEncoder.GetVelocity(), driveMotor.GetAppliedOutput()});
   }
 }
 
@@ -184,7 +189,7 @@ void RevSwerveModule::StopDrive() {
   driveMotor.StopMotor();
 
   if (nt_driveOutput.has_value()) {
-    nt_driveOutput.value()->SetDoubleArray(std::array{0.0, driveEncoder.GetVelocity(), driveMotor.GetAppliedOutput()});
+    nt_driveOutput.value().Set(std::array{0.0, driveEncoder.GetVelocity(), driveMotor.GetAppliedOutput()});
   }
 }
 

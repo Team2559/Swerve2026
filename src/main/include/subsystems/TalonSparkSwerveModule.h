@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <networktables/GenericEntry.h>
+#include <networktables/DoubleArrayTopic.h>
 #include <rev/SparkMax.h>
 
 #include <ctre/phoenix6/TalonFX.hpp>
@@ -53,6 +53,6 @@ private:
   std::function<units::turn_t()> drivePosition;
   rev::spark::SparkAbsoluteEncoder steerEncoder;
 
-  std::optional<nt::GenericEntry *> nt_driveOutput = {};
-  std::optional<nt::GenericEntry *> nt_steerOutput = {};
+  std::optional<nt::DoubleArrayPublisher> nt_driveOutput = {};
+  std::optional<nt::DoubleArrayPublisher> nt_steerOutput = {};
 };

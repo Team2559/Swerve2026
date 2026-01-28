@@ -47,7 +47,7 @@ RobotContainer::RobotContainer() :
 
   nt::NetworkTableInstance nt_instance = nt::NetworkTableInstance::GetDefault();
 
-  nt_fastDriveSpeed = nt_instance.GetDoubleTopic("/Drive/Max Speed").GetEntry(1.0);
+  nt_fastDriveSpeed = nt_instance.GetDoubleTopic("Drive/Max Speed").Subscribe(1.0);
 
   frc2::RobotModeTriggers::Disabled().OnFalse(
     frc2::InstantCommand([this]() {
@@ -62,10 +62,6 @@ RobotContainer::RobotContainer() :
       }
     }).WithName("InitializeVision")
   );
-
-  // frc::Shuffleboard::GetTab("LiveWindow")
-  //   .AddBoolean("Live Window Enabled", frc::LiveWindow::IsEnabled);
-  // TODO: Remove shuffleboard so it works with elastic
 }
 
 void RobotContainer::ConfigureBindings() {
@@ -94,7 +90,7 @@ void RobotContainer::ConfigureBindings() {
     {&m_driveSubsystem}
   );
 
-  frc::SmartDashboard::PutData("/Drive/Steer Only", &steerOnlyCommand);
+  frc::SmartDashboard::PutData("Drive/Steer Only", &steerOnlyCommand);
 
   m_driverController.Back().OnTrue(
     frc2::InstantCommand(
