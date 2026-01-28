@@ -12,8 +12,10 @@
 #include <frc/kinematics/SwerveModulePosition.h>
 #include <frc/kinematics/SwerveModuleState.h>
 #include <frc/smartdashboard/Field2d.h>
+#include <frc/smartdashboard/SendableChooser.h>
 #include <frc2/command/CommandPtr.h>
 #include <frc2/command/SubsystemBase.h>
+#include <frc2/command/sysid/SysIdRoutine.h>
 #include <networktables/DoubleTopic.h>
 #include <studica/Navx.h>
 #include <units/angular_velocity.h>
@@ -127,9 +129,30 @@ public:
    */
   frc::Field2d field;
 
+  frc2::CommandPtr SysIdQuasistaticSteer(frc2::sysid::Direction direction);
+  frc2::CommandPtr SysIdDynamicSteer(frc2::sysid::Direction direction);
+  frc2::CommandPtr SysIdQuasistaticDrive(frc2::sysid::Direction direction);
+  frc2::CommandPtr SysIdDynamicDrive(frc2::sysid::Direction direction);
+
+  enum class SysIdRoutine {
+    QuasistaticSteerForward,
+    QuasistaticSteerReverse,
+    DynamicSteerForward,
+    DynamicSteerReverse,
+    QuasistaticDriveForward,
+    QuasistaticDriveReverse,
+    DynamicDriveForward,
+    DynamicDriveReverse,
+  };
+
+  frc::SendableChooser<DriveSubsystem::SysIdRoutine> m_sysIdChooser{};
+
+  frc2::CommandPtr SysId();
+
 private:
   // The four swerve modules.
-  std::unique_ptr<SwerveModule> frontLeftModule;
+  std::unique_ptr<SwerveModule>
+    frontLeftModule;
   std::unique_ptr<SwerveModule> frontRightModule;
   std::unique_ptr<SwerveModule> rearLeftModule;
   std::unique_ptr<SwerveModule> rearRightModule;
@@ -163,4 +186,8 @@ private:
   nt::DoublePublisher nt_rPosition;
   nt::DoublePublisher nt_rSetpoint;
   nt::DoublePublisher nt_rOutput;
+
+  // SysId routines
+  frc2::sysid::SysIdRoutine m_steerSysIdRoutine;
+  frc2::sysid::SysIdRoutine m_driveSysIdRoutine;
 };

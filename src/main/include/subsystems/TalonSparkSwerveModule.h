@@ -34,7 +34,7 @@ public:
   void SetSteerPosition(units::angle::turn_t position) override;
   void StopSteer() override;
 
-  void SetDriveVelocity(units::velocity::meters_per_second_t velocity);
+  void SetDriveVelocity(units::velocity::meters_per_second_t velocity) override;
   void SetDrivePercent(double percent) override;
   void StopDrive() override;
 
@@ -42,6 +42,11 @@ public:
   const frc::SwerveModulePosition GetPosition() override;
   void SetDesiredState(frc::SwerveModuleState &state) override;
   void Stop() override;
+
+  void SetSteerVoltage(units::volt_t voltage) override;
+  void LogSteerInfo(frc::sysid::SysIdRoutineLog::MotorLog log) override;
+  void SetDriveVoltage(units::volt_t voltage) override;
+  void LogDriveInfo(frc::sysid::SysIdRoutineLog::MotorLog log) override;
 
 private:
   ctre::phoenix6::hardware::TalonFX driveMotor;

@@ -33,7 +33,7 @@ public:
   void SetSteerPosition(units::angle::turn_t position) override;
   void StopSteer() override;
 
-  void SetDriveVelocity(units::velocity::meters_per_second_t velocity);
+  void SetDriveVelocity(units::velocity::meters_per_second_t velocity) override;
   void SetDrivePercent(double percent) override;
   void StopDrive() override;
 

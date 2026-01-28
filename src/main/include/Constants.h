@@ -126,7 +126,7 @@ namespace DriveConstants {
   } // namespace DrivePID
 
   // Steer encoder units are scaled for more responsive PID feedback
-  constexpr double kSteerFeedbackScale = 10.0;
+  constexpr double kSteerFeedbackScale = 10.0; // TODO: this might not be necessary anymore
   constexpr double kInvSteerFeedbackScale = 1 / kSteerFeedbackScale;
 
   // Closed loop feedback parameters for module steer position

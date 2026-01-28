@@ -62,6 +62,8 @@ RobotContainer::RobotContainer() :
       }
     }).WithName("InitializeVision")
   );
+
+  (frc2::RobotModeTriggers::Test() && m_driverController.POVUp()).WhileTrue(m_driveSubsystem.SysId());
 }
 
 void RobotContainer::ConfigureBindings() {

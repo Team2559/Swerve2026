@@ -6,6 +6,7 @@
 
 #include <frc/kinematics/SwerveModulePosition.h>
 #include <frc/kinematics/SwerveModuleState.h>
+#include <frc2/command/sysid/SysIdRoutine.h>
 #include <units/angle.h>
 #include <units/length.h>
 #include <units/velocity.h>
@@ -44,6 +45,12 @@ public:
   virtual void SetDriveVelocity(units::meters_per_second_t velocity) = 0;
   virtual void SetDrivePercent(double percent) = 0;
   virtual void StopDrive() = 0;
+
+  // SysID functions; gives low-level access to the motors
+  virtual void SetSteerVoltage(units::volt_t voltage) = 0;
+  virtual void LogSteerInfo(frc::sysid::SysIdRoutineLog::MotorLog log) = 0;
+  virtual void SetDriveVoltage(units::volt_t voltage) = 0;
+  virtual void LogDriveInfo(frc::sysid::SysIdRoutineLog::MotorLog log) = 0;
 
   // Combined swerve module functions
   virtual const frc::SwerveModuleState GetState() = 0;

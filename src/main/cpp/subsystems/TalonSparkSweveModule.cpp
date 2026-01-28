@@ -256,3 +256,28 @@ void TalonSparkSwerveModule::Stop() {
   StopSteer();
   StopDrive();
 }
+
+void TalonSparkSwerveModule::SetSteerVoltage(units::volt_t voltage) {
+  steerMotor.SetVoltage(voltage);
+}
+
+void TalonSparkSwerveModule::LogSteerInfo(frc::sysid::SysIdRoutineLog::MotorLog log) {
+  log
+    .voltage(units::volt_t{steerMotor.GetBusVoltage()} * steerMotor.GetAppliedOutput())
+    .current(units::ampere_t(steerMotor.GetOutputCurrent()))
+    .position(units::turn_t{steerEncoder.GetPosition() * kInvSteerFeedbackScale})
+    .velocity(units::turns_per_second_t{steerEncoder.GetVelocity() * kInvSteerFeedbackScale});
+}
+
+void TalonSparkSwerveModule::SetDriveVoltage(units::volt_t voltage) {
+  driveMotor.SetVoltage(voltage);
+}
+
+void TalonSparkSwerveModule::LogDriveInfo(frc::sysid::SysIdRoutineLog::MotorLog log) {
+  log
+    .voltage(driveMotor.GetMotorVoltage().GetValue())
+    .current(driveMotor.GetStatorCurrent().GetValue())
+    .position(driveMotor.GetPosition().GetValue())
+    .velocity(driveMotor.GetVelocity().GetValue())
+    .acceleration(driveMotor.GetAcceleration().GetValue());
+}

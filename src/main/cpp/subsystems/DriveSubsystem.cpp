@@ -5,6 +5,7 @@
 #include "subsystems/DriveSubsystem.h"
 
 #include <frc/smartdashboard/SmartDashboard.h>
+#include <frc2/command/Commands.h>
 #include <frc2/command/InstantCommand.h>
 #include <frc2/command/RunCommand.h>
 #include <frc2/command/button/RobotModeTriggers.h>
@@ -40,9 +41,6 @@ DriveSubsystem::DriveSubsystem() :
     },
     m_navX{0},
     m_poseEstimator{kDriveKinematics, GetRotation3D(m_navX).value_or(frc::Rotation3d()), GetModulePositions(), frc::Pose3d()},
-    m_xController{TranslationPID::kP, TranslationPID::kI, TranslationPID::kD},
-    m_yController{TranslationPID::kP, TranslationPID::kI, TranslationPID::kD},
-    m_rController{OrientationPID::kP, OrientationPID::kI, OrientationPID::kD},
     m_driveTuner{
       [this](PIDUpdate update) {
         frontLeftModule->UpdateDrivePID(update);
@@ -65,6 +63,46 @@ DriveSubsystem::DriveSubsystem() :
       SteerPID::kP,
       SteerPID::kI,
       SteerPID::kD
+    },
+    m_xController{TranslationPID::kP, TranslationPID::kI, TranslationPID::kD},
+    m_yController{TranslationPID::kP, TranslationPID::kI, TranslationPID::kD},
+    m_rController{OrientationPID::kP, OrientationPID::kI, OrientationPID::kD},
+    m_steerSysIdRoutine{
+      frc2::sysid::Config{{}, 3_V, {}, nullptr},
+      frc2::sysid::Mechanism{
+        [this](units::volt_t steerVoltage) {
+          frontLeftModule->SetSteerVoltage(steerVoltage);
+          frontRightModule->SetSteerVoltage(steerVoltage);
+          rearLeftModule->SetSteerVoltage(steerVoltage);
+          rearRightModule->SetSteerVoltage(steerVoltage);
+        },
+        [this](frc::sysid::SysIdRoutineLog *log) {
+          frontLeftModule->LogSteerInfo(log->Motor("frontLeftSteer"));
+          frontRightModule->LogSteerInfo(log->Motor("frontRightSteer"));
+          rearLeftModule->LogSteerInfo(log->Motor("rearLeftSteer"));
+          rearRightModule->LogSteerInfo(log->Motor("rearRightSteer"));
+        },
+        this
+      }
+    },
+    m_driveSysIdRoutine{
+      frc2::sysid::Config{{}, 3_V, {}, nullptr},
+      frc2::sysid::Mechanism{
+        [this](units::volt_t driveVoltage) {
+          this->SteerTo(1.0_mps, 0.0_mps, 0.0_rad_per_s, false);
+          frontLeftModule->SetDriveVoltage(driveVoltage);
+          frontRightModule->SetDriveVoltage(driveVoltage);
+          rearLeftModule->SetDriveVoltage(driveVoltage);
+          rearRightModule->SetDriveVoltage(driveVoltage);
+        },
+        [this](frc::sysid::SysIdRoutineLog *log) {
+          frontLeftModule->LogDriveInfo(log->Motor("frontLeftDrive"));
+          frontRightModule->LogDriveInfo(log->Motor("frontRightDrive"));
+          rearLeftModule->LogDriveInfo(log->Motor("rearLeftDrive"));
+          rearRightModule->LogDriveInfo(log->Motor("rearRightDrive"));
+        },
+        this
+      }
     } {
   const frc::Pose3d initialPose = m_poseEstimator.GetEstimatedPosition();
 
@@ -154,6 +192,17 @@ void DriveSubsystem::TestInit() {
   frontRightModule->TestInit("Front right");
   rearLeftModule->TestInit("Rear left");
   rearRightModule->TestInit("Rear right");
+
+  m_sysIdChooser.SetDefaultOption("Forward Quasistatic Steer", DriveSubsystem::SysIdRoutine::QuasistaticSteerForward);
+  m_sysIdChooser.AddOption("Reverse Quasistatic Steer", DriveSubsystem::SysIdRoutine::QuasistaticSteerReverse);
+  m_sysIdChooser.AddOption("Forward Dynamic Steer", DriveSubsystem::SysIdRoutine::DynamicSteerForward);
+  m_sysIdChooser.AddOption("Reverse Dynamic Steer", DriveSubsystem::SysIdRoutine::DynamicSteerReverse);
+  m_sysIdChooser.AddOption("Forward Quasistatic Drive", DriveSubsystem::SysIdRoutine::QuasistaticDriveForward);
+  m_sysIdChooser.AddOption("Reverse Quasistatic Drive", DriveSubsystem::SysIdRoutine::QuasistaticDriveReverse);
+  m_sysIdChooser.AddOption("Forward Dynamic Drive", DriveSubsystem::SysIdRoutine::DynamicDriveForward);
+  m_sysIdChooser.AddOption("Reverse Dynamic Drive", DriveSubsystem::SysIdRoutine::DynamicDriveReverse);
+
+  frc::SmartDashboard::PutData("Drive/SysId Routine", &m_sysIdChooser);
 }
 
 void DriveSubsystem::TestExit() {
@@ -270,4 +319,58 @@ frc::Pose3d DriveSubsystem::GetPose() {
 
 void DriveSubsystem::UpdateVisionPose(frc::Pose3d measurement, units::millisecond_t timestamp) {
   m_poseEstimator.AddVisionMeasurement(measurement, timestamp, {0.5, 0.5, 0.5, 0.8});
+}
+
+frc2::CommandPtr DriveSubsystem::SysIdQuasistaticSteer(frc2::sysid::Direction direction) {
+  return m_steerSysIdRoutine.Quasistatic(direction);
+}
+
+frc2::CommandPtr DriveSubsystem::SysIdDynamicSteer(frc2::sysid::Direction direction) {
+  return m_steerSysIdRoutine.Dynamic(direction);
+}
+
+frc2::CommandPtr DriveSubsystem::SysIdQuasistaticDrive(frc2::sysid::Direction direction) {
+  return m_driveSysIdRoutine.Quasistatic(direction);
+}
+
+frc2::CommandPtr DriveSubsystem::SysIdDynamicDrive(frc2::sysid::Direction direction) {
+  return m_driveSysIdRoutine.Dynamic(direction);
+}
+
+frc2::CommandPtr DriveSubsystem::SysId() {
+  return frc2::cmd::Select<DriveSubsystem::SysIdRoutine>(
+    [this]() { return m_sysIdChooser.GetSelected(); },
+    std::pair{
+      DriveSubsystem::SysIdRoutine::QuasistaticSteerForward,
+      SysIdQuasistaticSteer(frc2::sysid::Direction::kForward)
+    },
+    std::pair{
+      DriveSubsystem::SysIdRoutine::QuasistaticSteerReverse,
+      SysIdQuasistaticSteer(frc2::sysid::Direction::kReverse)
+    },
+    std::pair{
+      DriveSubsystem::SysIdRoutine::DynamicSteerForward,
+      SysIdDynamicSteer(frc2::sysid::Direction::kForward)
+    },
+    std::pair{
+      DriveSubsystem::SysIdRoutine::DynamicSteerReverse,
+      SysIdDynamicSteer(frc2::sysid::Direction::kReverse)
+    },
+    std::pair{
+      DriveSubsystem::SysIdRoutine::QuasistaticDriveForward,
+      SysIdQuasistaticDrive(frc2::sysid::Direction::kForward)
+    },
+    std::pair{
+      DriveSubsystem::SysIdRoutine::QuasistaticDriveReverse,
+      SysIdQuasistaticDrive(frc2::sysid::Direction::kReverse)
+    },
+    std::pair{
+      DriveSubsystem::SysIdRoutine::DynamicDriveForward,
+      SysIdDynamicDrive(frc2::sysid::Direction::kForward)
+    },
+    std::pair{
+      DriveSubsystem::SysIdRoutine::DynamicDriveReverse,
+      SysIdDynamicDrive(frc2::sysid::Direction::kReverse)
+    }
+  );
 }
