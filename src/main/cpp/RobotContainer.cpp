@@ -62,8 +62,6 @@ RobotContainer::RobotContainer() :
       }
     }).WithName("InitializeVision")
   );
-
-  (frc2::RobotModeTriggers::Test() && m_driverController.POVUp()).WhileTrue(m_driveSubsystem.SysId());
 }
 
 void RobotContainer::ConfigureBindings() {
@@ -111,6 +109,8 @@ void RobotContainer::ConfigureBindings() {
       []() { frc::LiveWindow::SetEnabled(false); }
     ).WithName("LiveWindow")
   );
+
+  (frc2::RobotModeTriggers::Test() && m_driverController.POVUp()).WhileTrue(m_driveSubsystem.SysId());
 }
 
 void RobotContainer::ListAutonomousCommands() {
