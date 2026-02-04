@@ -134,19 +134,6 @@ public:
   frc2::CommandPtr SysIdQuasistaticDrive(frc2::sysid::Direction direction);
   frc2::CommandPtr SysIdDynamicDrive(frc2::sysid::Direction direction);
 
-  enum class SysIdRoutine {
-    QuasistaticSteerForward,
-    QuasistaticSteerReverse,
-    DynamicSteerForward,
-    DynamicSteerReverse,
-    QuasistaticDriveForward,
-    QuasistaticDriveReverse,
-    DynamicDriveForward,
-    DynamicDriveReverse,
-  };
-
-  frc::SendableChooser<DriveSubsystem::SysIdRoutine> m_sysIdChooser{};
-
   frc2::CommandPtr SysId();
 
 private:
@@ -190,4 +177,17 @@ private:
   // SysId routines
   frc2::sysid::SysIdRoutine m_steerSysIdRoutine;
   frc2::sysid::SysIdRoutine m_driveSysIdRoutine;
+
+  enum class SysIdRoutine {
+    QuasistaticSteerForward,
+    QuasistaticSteerReverse,
+    DynamicSteerForward,
+    DynamicSteerReverse,
+    QuasistaticDriveForward,
+    QuasistaticDriveReverse,
+    DynamicDriveForward,
+    DynamicDriveReverse,
+  };
+
+  frc::SendableChooser<SysIdRoutine> m_sysIdChooser{};
 };

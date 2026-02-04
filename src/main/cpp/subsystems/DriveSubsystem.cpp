@@ -338,38 +338,38 @@ frc2::CommandPtr DriveSubsystem::SysIdDynamicDrive(frc2::sysid::Direction direct
 }
 
 frc2::CommandPtr DriveSubsystem::SysId() {
-  return frc2::cmd::Select<DriveSubsystem::SysIdRoutine>(
+  return frc2::cmd::Select<SysIdRoutine>(
     [this]() { return m_sysIdChooser.GetSelected(); },
     std::pair{
-      DriveSubsystem::SysIdRoutine::QuasistaticSteerForward,
+      SysIdRoutine::QuasistaticSteerForward,
       SysIdQuasistaticSteer(frc2::sysid::Direction::kForward)
     },
     std::pair{
-      DriveSubsystem::SysIdRoutine::QuasistaticSteerReverse,
+      SysIdRoutine::QuasistaticSteerReverse,
       SysIdQuasistaticSteer(frc2::sysid::Direction::kReverse)
     },
     std::pair{
-      DriveSubsystem::SysIdRoutine::DynamicSteerForward,
+      SysIdRoutine::DynamicSteerForward,
       SysIdDynamicSteer(frc2::sysid::Direction::kForward)
     },
     std::pair{
-      DriveSubsystem::SysIdRoutine::DynamicSteerReverse,
+      SysIdRoutine::DynamicSteerReverse,
       SysIdDynamicSteer(frc2::sysid::Direction::kReverse)
     },
     std::pair{
-      DriveSubsystem::SysIdRoutine::QuasistaticDriveForward,
+      SysIdRoutine::QuasistaticDriveForward,
       SysIdQuasistaticDrive(frc2::sysid::Direction::kForward)
     },
     std::pair{
-      DriveSubsystem::SysIdRoutine::QuasistaticDriveReverse,
+      SysIdRoutine::QuasistaticDriveReverse,
       SysIdQuasistaticDrive(frc2::sysid::Direction::kReverse)
     },
     std::pair{
-      DriveSubsystem::SysIdRoutine::DynamicDriveForward,
+      SysIdRoutine::DynamicDriveForward,
       SysIdDynamicDrive(frc2::sysid::Direction::kForward)
     },
     std::pair{
-      DriveSubsystem::SysIdRoutine::DynamicDriveReverse,
+      SysIdRoutine::DynamicDriveReverse,
       SysIdDynamicDrive(frc2::sysid::Direction::kReverse)
     }
   );
