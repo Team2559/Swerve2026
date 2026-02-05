@@ -25,8 +25,8 @@
 #include <memory>
 
 #include "Constants.h"
-#include "PIDTuner.h"
-#include "SwerveModule.h"
+#include "helpers/PIDTuner.h"
+#include "subsystems/SwerveModule.h"
 
 class DriveSubsystem : public frc2::SubsystemBase {
 public:

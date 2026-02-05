@@ -9,7 +9,7 @@
 
 #include <string>
 
-#include "SwerveModule.h"
+#include "subsystems/SwerveModule.h"
 
 class RevSwerveModule : public SwerveModule {
 public:

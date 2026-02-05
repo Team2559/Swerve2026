@@ -10,7 +10,7 @@
 
 #include <string>
 
-#include "SwerveModule.h"
+#include "subsystems/SwerveModule.h"
 
 class TalonSparkSwerveModule : public SwerveModule {
 public:
