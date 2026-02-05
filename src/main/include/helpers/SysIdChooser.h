@@ -19,19 +19,19 @@ enum class SysIdSubroutine {
 
 class SysIdChooser {
 public:
-  SysIdChooser(std::initializer_list<std::pair<std::string, std::unique_ptr<frc2::sysid::SysIdRoutine>>> routines);
+  SysIdChooser(std::initializer_list<std::pair<std::string, std::shared_ptr<frc2::sysid::SysIdRoutine>>> routines);
 
   frc2::CommandPtr RunSelected();
 
 private:
-  static std::vector<std::pair<std::pair<uint, SysIdSubroutine>, std::unique_ptr<frc2::Command>>> ExpandRoutineCommands(
-    std::vector<std::unique_ptr<frc2::sysid::SysIdRoutine>> &routines
+  static std::vector<std::pair<uint, std::unique_ptr<frc2::Command>>> ExpandRoutineCommands(
+    std::vector<std::shared_ptr<frc2::sysid::SysIdRoutine>> &routines
   );
 
-  static std::vector<std::pair<std::string, std::pair<uint, SysIdSubroutine>>> ExpandRoutineChoices(
+  static std::vector<std::pair<std::string, uint>> ExpandRoutineChoices(
     std::vector<std::string> &routine_names
   );
 
-  std::vector<std::unique_ptr<frc2::sysid::SysIdRoutine>> m_routines;
-  frc::SendableChooser<std::pair<uint, SysIdSubroutine>> m_sysIdChooser{};
+  std::vector<std::shared_ptr<frc2::sysid::SysIdRoutine>> m_routines;
+  frc::SendableChooser<uint> m_sysIdChooser{};
 };
