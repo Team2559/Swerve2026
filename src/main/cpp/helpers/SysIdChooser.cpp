@@ -1,4 +1,4 @@
-#include "commands/SysIdChooser.h"
+#include "helpers/SysIdChooser.h"
 
 #include <frc2/command/Commands.h>
 
