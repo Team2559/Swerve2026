@@ -159,8 +159,6 @@ void DriveSubsystem::Periodic() {
 
   frc::Pose3d pose = m_poseEstimator.Update(heading, GetModulePositions());
 
-  // TODO: Add Limelight update?
-
   nt_xPosition.Set(pose.X().value());
   nt_yPosition.Set(pose.Y().value());
   nt_rPosition.Set(pose.Rotation().ToRotation2d().Radians().value());
