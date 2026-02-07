@@ -26,7 +26,7 @@ public:
   template <std::convertible_to<std::unique_ptr<frc2::sysid::SysIdRoutine>>... SysIdRoutinePtrs>
   SysIdChooser(std::pair<std::string, SysIdRoutinePtrs>... routines);
 
-  explicit SysIdChooser(std::vector<std::pair<std::string, std::unique_ptr<frc2::sysid::SysIdRoutine>>> routines);
+  explicit SysIdChooser(std::vector<std::pair<std::string, std::unique_ptr<frc2::sysid::SysIdRoutine>>> &&routines);
 
   frc2::CommandPtr RunSelected();
 

@@ -24,7 +24,7 @@ SysIdChooser::SysIdChooser(std::pair<std::string, SysIdRoutinePtrs>... routines)
   }
 }
 
-SysIdChooser::SysIdChooser(std::vector<std::pair<std::string, std::unique_ptr<frc2::sysid::SysIdRoutine>>> routines) :
+SysIdChooser::SysIdChooser(std::vector<std::pair<std::string, std::unique_ptr<frc2::sysid::SysIdRoutine>>> &&routines) :
     m_routines{} {
   std::vector<std::string> routine_names{};
 
