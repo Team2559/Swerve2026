@@ -26,6 +26,7 @@
 
 #include "Constants.h"
 #include "helpers/PIDTuner.h"
+#include "helpers/SysIdChooser.h"
 #include "subsystems/SwerveModule.h"
 
 class DriveSubsystem : public frc2::SubsystemBase {
@@ -129,11 +130,11 @@ public:
    */
   frc::Field2d field;
 
-  frc2::CommandPtr SysIdQuasistaticSteer(frc2::sysid::Direction direction);
-  frc2::CommandPtr SysIdDynamicSteer(frc2::sysid::Direction direction);
-  frc2::CommandPtr SysIdQuasistaticDrive(frc2::sysid::Direction direction);
-  frc2::CommandPtr SysIdDynamicDrive(frc2::sysid::Direction direction);
+  // Individual mechanism SysId routines
+  std::unique_ptr<frc2::sysid::SysIdRoutine> SteerSysId();
+  std::unique_ptr<frc2::sysid::SysIdRoutine> DriveSysId();
 
+  // Combined SysId routine command
   frc2::CommandPtr SysId();
 
 private:
@@ -159,6 +160,9 @@ private:
   frc::PIDController m_yController;
   frc::PIDController m_rController;
 
+  // SysId chooser for calibrating during test mode
+  std::optional<SysIdChooser> m_sysIdChooser{};
+
   // Dashboard logging entries
   // -----------------------------------
 
@@ -173,21 +177,4 @@ private:
   nt::DoublePublisher nt_rPosition;
   nt::DoublePublisher nt_rSetpoint;
   nt::DoublePublisher nt_rOutput;
-
-  // SysId routines
-  frc2::sysid::SysIdRoutine m_steerSysIdRoutine;
-  frc2::sysid::SysIdRoutine m_driveSysIdRoutine;
-
-  enum class SysIdRoutine {
-    QuasistaticSteerForward,
-    QuasistaticSteerReverse,
-    DynamicSteerForward,
-    DynamicSteerReverse,
-    QuasistaticDriveForward,
-    QuasistaticDriveReverse,
-    DynamicDriveForward,
-    DynamicDriveReverse,
-  };
-
-  frc::SendableChooser<SysIdRoutine> m_sysIdChooser{};
 };
