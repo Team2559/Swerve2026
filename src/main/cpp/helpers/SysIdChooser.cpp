@@ -1,16 +1,36 @@
+// Copyright (c) FRC 2559, FIRST, and other WPILib contributors.
+// Open Source Software; you can modify and/or share it under the terms of
+// the WPILib BSD license file in the root directory of this project.
+
 #include "helpers/SysIdChooser.h"
 
 #include <frc2/command/Commands.h>
 
-SysIdChooser::SysIdChooser(std::initializer_list<std::pair<std::string, std::shared_ptr<frc2::sysid::SysIdRoutine>>> routines) :
-  m_routines{}
-{
+#include <memory>
+#include <string>
+#include <utility>
+#include <vector>
+
+template <std::convertible_to<std::unique_ptr<frc2::sysid::SysIdRoutine>>... SysIdRoutinePtrs>
+SysIdChooser::SysIdChooser(std::pair<std::string, SysIdRoutinePtrs>... routines) :
+    m_routines{} {
   std::vector<std::string> routine_names{};
-  routine_names.reserve(routines.size());
-  m_routines.reserve(routines.size());
+
+  (routine_names.push_back(routines.first), ...);
+  ((void)m_routines.emplace_back(routines.second), ...);
+
+  for (auto choice : ExpandRoutineChoices(routine_names)) {
+    m_sysIdChooser.AddOption(choice.first, choice.second);
+  }
+}
+
+SysIdChooser::SysIdChooser(std::vector<std::pair<std::string, std::unique_ptr<frc2::sysid::SysIdRoutine>>> routines) :
+    m_routines{} {
+  std::vector<std::string> routine_names{};
+
   for (auto &routine : routines) {
     routine_names.push_back(routine.first);
-    m_routines.push_back(routine.second);
+    m_routines.emplace_back(std::move(routine.second));
   }
 
   for (auto choice : ExpandRoutineChoices(routine_names)) {
@@ -20,13 +40,14 @@ SysIdChooser::SysIdChooser(std::initializer_list<std::pair<std::string, std::sha
 
 frc2::CommandPtr SysIdChooser::RunSelected() {
   return frc2::SelectCommand<uint>(
-    [this]() { return m_sysIdChooser.GetSelected(); },
-    ExpandRoutineCommands(m_routines)
-  ).ToPtr();
+           [this]() { return m_sysIdChooser.GetSelected(); },
+           ExpandRoutineCommands(m_routines)
+  )
+    .ToPtr();
 }
 
 std::vector<std::pair<uint, std::unique_ptr<frc2::Command>>> SysIdChooser::ExpandRoutineCommands(
-  std::vector<std::shared_ptr<frc2::sysid::SysIdRoutine>> &routines
+  std::vector<std::unique_ptr<frc2::sysid::SysIdRoutine>> &routines
 ) {
   std::vector<std::pair<uint, std::unique_ptr<frc2::Command>>> vec{};
   vec.reserve(routines.size() * 4);
@@ -60,4 +81,3 @@ std::vector<std::pair<std::string, uint>> SysIdChooser::ExpandRoutineChoices(
 
   return vec;
 }
-

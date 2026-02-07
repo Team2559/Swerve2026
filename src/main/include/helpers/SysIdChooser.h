@@ -10,6 +10,10 @@
 #include <frc2/command/SelectCommand.h>
 #include <frc2/command/sysid/SysIdRoutine.h>
 
+#include <memory>
+#include <string>
+#include <vector>
+
 enum class SysIdSubroutine {
   kQuasistaticForward,
   kQuasistaticReverse,
@@ -19,19 +23,22 @@ enum class SysIdSubroutine {
 
 class SysIdChooser {
 public:
-  SysIdChooser(std::initializer_list<std::pair<std::string, std::shared_ptr<frc2::sysid::SysIdRoutine>>> routines);
+  template <std::convertible_to<std::unique_ptr<frc2::sysid::SysIdRoutine>>... SysIdRoutinePtrs>
+  SysIdChooser(std::pair<std::string, SysIdRoutinePtrs>... routines);
+
+  explicit SysIdChooser(std::vector<std::pair<std::string, std::unique_ptr<frc2::sysid::SysIdRoutine>>> routines);
 
   frc2::CommandPtr RunSelected();
 
 private:
   static std::vector<std::pair<uint, std::unique_ptr<frc2::Command>>> ExpandRoutineCommands(
-    std::vector<std::shared_ptr<frc2::sysid::SysIdRoutine>> &routines
+    std::vector<std::unique_ptr<frc2::sysid::SysIdRoutine>> &routines
   );
 
   static std::vector<std::pair<std::string, uint>> ExpandRoutineChoices(
     std::vector<std::string> &routine_names
   );
 
-  std::vector<std::shared_ptr<frc2::sysid::SysIdRoutine>> m_routines;
+  std::vector<std::unique_ptr<frc2::sysid::SysIdRoutine>> m_routines;
   frc::SendableChooser<uint> m_sysIdChooser{};
 };
