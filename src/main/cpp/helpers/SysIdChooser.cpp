@@ -39,11 +39,13 @@ SysIdChooser::SysIdChooser(std::vector<std::pair<std::string, std::unique_ptr<fr
 }
 
 frc2::CommandPtr SysIdChooser::RunSelected() {
-  return frc2::SelectCommand<uint>(
-           [this]() { return m_sysIdChooser.GetSelected(); },
-           ExpandRoutineCommands(m_routines)
-  )
-    .ToPtr();
+  return (
+    frc2::SelectCommand<uint>(
+      [this]() { return m_sysIdChooser.GetSelected(); },
+      ExpandRoutineCommands(m_routines)
+    )
+      .ToPtr()
+  );
 }
 
 std::vector<std::pair<uint, std::unique_ptr<frc2::Command>>> SysIdChooser::ExpandRoutineCommands(

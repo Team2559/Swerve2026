@@ -12,6 +12,7 @@
 #include <networktables/NetworkTableInstance.h>
 
 #include <memory>
+#include <string>
 
 #include "Constants.h"
 #include "subsystems/TalonSparkSwerveModule.h"

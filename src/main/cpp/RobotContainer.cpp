@@ -15,8 +15,8 @@
 
 #include <tuple>
 
-#include "helpers/ButtonUtil.h"
 #include "commands/Autos.h"
+#include "helpers/ButtonUtil.h"
 
 RobotContainer::RobotContainer() :
     m_visionSubsystem(
