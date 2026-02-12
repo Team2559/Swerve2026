@@ -24,7 +24,16 @@ enum class SysIdSubroutine {
 class SysIdChooser {
 public:
   template <std::convertible_to<std::unique_ptr<frc2::sysid::SysIdRoutine>>... SysIdRoutinePtrs>
-  SysIdChooser(std::pair<std::string, SysIdRoutinePtrs>... routines);
+  SysIdChooser(std::pair<std::string, SysIdRoutinePtrs> &&...routines) {
+    std::vector<std::string> routine_names{};
+
+    (routine_names.push_back(routines.first), ...);
+    ((void)m_routines.emplace_back(std::move(routines.second)), ...);
+
+    for (auto choice : ExpandRoutineChoices(routine_names)) {
+      m_sysIdChooser.AddOption(choice.first, choice.second);
+    }
+  }
 
   explicit SysIdChooser(std::vector<std::pair<std::string, std::unique_ptr<frc2::sysid::SysIdRoutine>>> &&routines);
 
@@ -39,6 +48,6 @@ private:
     std::vector<std::string> &routine_names
   );
 
-  std::vector<std::unique_ptr<frc2::sysid::SysIdRoutine>> m_routines;
+  std::vector<std::unique_ptr<frc2::sysid::SysIdRoutine>> m_routines{};
   frc::SendableChooser<uint> m_sysIdChooser{};
 };

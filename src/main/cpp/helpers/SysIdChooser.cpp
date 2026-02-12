@@ -11,24 +11,10 @@
 #include <utility>
 #include <vector>
 
-template <std::convertible_to<std::unique_ptr<frc2::sysid::SysIdRoutine>>... SysIdRoutinePtrs>
-SysIdChooser::SysIdChooser(std::pair<std::string, SysIdRoutinePtrs>... routines) :
-    m_routines{} {
+SysIdChooser::SysIdChooser(std::vector<std::pair<std::string, std::unique_ptr<frc2::sysid::SysIdRoutine>>> &&routines) {
   std::vector<std::string> routine_names{};
 
-  (routine_names.push_back(routines.first), ...);
-  ((void)m_routines.emplace_back(routines.second), ...);
-
-  for (auto choice : ExpandRoutineChoices(routine_names)) {
-    m_sysIdChooser.AddOption(choice.first, choice.second);
-  }
-}
-
-SysIdChooser::SysIdChooser(std::vector<std::pair<std::string, std::unique_ptr<frc2::sysid::SysIdRoutine>>> &&routines) :
-    m_routines{} {
-  std::vector<std::string> routine_names{};
-
-  for (auto &routine : routines) {
+  for (auto &&routine : routines) {
     routine_names.push_back(routine.first);
     m_routines.emplace_back(std::move(routine.second));
   }
@@ -78,7 +64,7 @@ std::vector<std::pair<std::string, uint>> SysIdChooser::ExpandRoutineChoices(
     vec.emplace_back(fmt::format("%s Quasistatic Reverse", routine_name), id + (uint)SysIdSubroutine::kQuasistaticReverse);
     vec.emplace_back(fmt::format("%s Dynamic Forward", routine_name), id + (uint)SysIdSubroutine::kDynamicForward);
     vec.emplace_back(fmt::format("%s Dynamic Reverse", routine_name), id + (uint)SysIdSubroutine::kDynamicForward);
-    id++;
+    id += 4;
   }
 
   return vec;
