@@ -37,13 +37,11 @@ TalonSparkSwerveModule::TalonSparkSwerveModule(int driveCanID, int steerCanID, u
       .WithNeutralMode(NeutralModeValue::Brake);
 
     driveConfig.Slot0
-      .WithGravityType(GravityTypeValue::Elevator_Static)
       .WithKP(DrivePID::kP)
       .WithKI(DrivePID::kI)
       .WithKD(DrivePID::kD)
       .WithKS(DrivePID::kS)
-      .WithKV(DrivePID::kV)
-      .WithKA(DrivePID::kA);
+      .WithKV(DrivePID::kV);
 
     driveMotor.GetConfigurator().Apply(driveConfig);
   }

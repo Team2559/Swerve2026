@@ -122,7 +122,6 @@ namespace DriveConstants {
     constexpr double kD = 0.006;
     constexpr double kS = 0.0;
     constexpr double kV = (1.0 / driveMotorPlant.Kv).value();
-    constexpr double kA = 0.0;
   } // namespace DrivePID
 
   // Steer encoder units are scaled for more responsive PID feedback
