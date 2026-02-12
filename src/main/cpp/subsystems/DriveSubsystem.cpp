@@ -147,7 +147,7 @@ void DriveSubsystem::SimulationPeriodic() {
 
 void DriveSubsystem::TestInit() {
   frc::SmartDashboard::PutData("Drive Setup/PID", &m_driveTuner);
-  frc::SmartDashboard::PutData("Drive Setup/PID", &m_steerTuner);
+  frc::SmartDashboard::PutData("Steer Setup/PID", &m_steerTuner);
 
   // driveSetupTab.Add("Legend", "(Blue) setpoint, (Red) measured, (Green) output");
   // steerSetupTab.Add("Legend", "(Blue) setpoint, (Red) measured, (Green) output");
@@ -158,6 +158,8 @@ void DriveSubsystem::TestInit() {
   rearRightModule->TestInit("Rear right");
 
   m_sysIdChooser = {std::pair{std::string{"Steer"}, SteerSysId()}, std::pair{std::string{"Drive"}, DriveSysId()}};
+
+  frc::SmartDashboard::PutData("Drive Setup/SysId", &m_sysIdChooser.value());
 }
 
 void DriveSubsystem::TestExit() {
