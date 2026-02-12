@@ -71,7 +71,7 @@ TalonSparkSwerveModule::TalonSparkSwerveModule(int driveCanID, int steerCanID, u
     steerConfig.closedLoop.feedForward
       .kS(SteerPID::kS);
 
-    steerMotor.Configure(steerConfig, SparkMax::ResetMode::kResetSafeParameters, SparkMax::PersistMode::kNoPersistParameters);
+    steerMotor.Configure(steerConfig, rev::ResetMode::kResetSafeParameters, rev::PersistMode::kNoPersistParameters);
   }
 }
 

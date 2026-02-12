@@ -17,9 +17,9 @@
 
 class SwerveModule {
 public:
-  // Initializer
+  // Initializer and Destructor
   SwerveModule() = default;
-  ~SwerveModule() = default;
+  virtual ~SwerveModule() = default;
 
   // Test Methods
   virtual void TestInit(std::string name) = 0;

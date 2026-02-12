@@ -39,7 +39,7 @@ RevSwerveModule::RevSwerveModule(int driveCanID, int steerCanID, units::angle::t
       .Pid(DrivePID::kP, DrivePID::kI, DrivePID::kD);
     driveVff = DrivePID::kV;
 
-    driveMotor.Configure(driveConfig, SparkFlex::ResetMode::kResetSafeParameters, SparkFlex::PersistMode::kNoPersistParameters);
+    driveMotor.Configure(driveConfig, rev::ResetMode::kResetSafeParameters, rev::PersistMode::kNoPersistParameters);
   }
   {
     SparkFlexConfig steerConfig;
@@ -64,7 +64,7 @@ RevSwerveModule::RevSwerveModule(int driveCanID, int steerCanID, units::angle::t
       .PositionWrappingInputRange(-0.5 * kSteerFeedbackScale, 0.5 * kSteerFeedbackScale)
       .Pid(SteerPID::kP, SteerPID::kI, SteerPID::kD);
 
-    steerMotor.Configure(steerConfig, SparkFlex::ResetMode::kResetSafeParameters, SparkFlex::PersistMode::kNoPersistParameters);
+    steerMotor.Configure(steerConfig, rev::ResetMode::kResetSafeParameters, rev::PersistMode::kNoPersistParameters);
   }
 }
 
