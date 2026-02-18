@@ -124,10 +124,6 @@ namespace DriveConstants {
     constexpr double kV = (1.0 / driveMotorPlant.Kv).value();
   } // namespace DrivePID
 
-  // Steer encoder units are scaled for more responsive PID feedback
-  constexpr double kSteerFeedbackScale = 10.0; // TODO: this might not be necessary anymore
-  constexpr double kInvSteerFeedbackScale = 1 / kSteerFeedbackScale;
-
   // Closed loop feedback parameters for module steer position
   namespace SteerPID {
     constexpr double kP = 0.8;

@@ -21,7 +21,7 @@ enum class SysIdSubroutine {
   kDynamicReverse,
 };
 
-class SysIdChooser: public wpi::Sendable {
+class SysIdChooser : public wpi::Sendable {
 public:
   template <std::convertible_to<std::unique_ptr<frc2::sysid::SysIdRoutine>>... SysIdRoutinePtrs>
   SysIdChooser(std::pair<std::string, SysIdRoutinePtrs> &&...routines) {

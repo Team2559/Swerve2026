@@ -53,19 +53,19 @@ TalonSparkSwerveModule::TalonSparkSwerveModule(int driveCanID, int steerCanID, u
       .Inverted(kSteerMotorInverted);
 
     steerConfig.encoder
-      .PositionConversionFactor(kSteerFeedbackScale / kSteerGearRatio)
-      .VelocityConversionFactor(kSteerFeedbackScale / kSteerGearRatio * (1.0_s / 1.0_min));
+      .PositionConversionFactor(1.0 / kSteerGearRatio)
+      .VelocityConversionFactor(1.0 / kSteerGearRatio * (1.0_s / 1.0_min));
 
     steerConfig.absoluteEncoder
       .ZeroOffset(wrapOffset(offset).value())
       .Inverted(kSteerSensorInverted)
-      .PositionConversionFactor(kSteerFeedbackScale)
-      .VelocityConversionFactor(kSteerFeedbackScale * (1.0_s / 1.0_min));
+      .PositionConversionFactor(1.0)
+      .VelocityConversionFactor(1.0_s / 1.0_min);
 
     steerConfig.closedLoop
       .SetFeedbackSensor(FeedbackSensor::kAbsoluteEncoder)
       .PositionWrappingEnabled(true)
-      .PositionWrappingInputRange(-0.5 * kSteerFeedbackScale, 0.5 * kSteerFeedbackScale)
+      .PositionWrappingInputRange(-0.5, 0.5)
       .Pid(SteerPID::kP, SteerPID::kI, SteerPID::kD);
 
     steerConfig.closedLoop.feedForward
@@ -195,11 +195,11 @@ void TalonSparkSwerveModule::SetSteerOffset(units::angle::turn_t offset) {
 }
 
 units::angle::turn_t TalonSparkSwerveModule::GetSteerPosition() {
-  return units::angle::turn_t{steerEncoder.GetPosition() * kInvSteerFeedbackScale};
+  return units::angle::turn_t{steerEncoder.GetPosition()};
 }
 
 void TalonSparkSwerveModule::SetSteerPosition(units::angle::turn_t position) {
-  steerMotor.GetClosedLoopController().SetSetpoint(position.value() * kSteerFeedbackScale, SparkMax::ControlType::kPosition);
+  steerMotor.GetClosedLoopController().SetSetpoint(position.value(), SparkMax::ControlType::kPosition);
 }
 
 void TalonSparkSwerveModule::StopSteer() {
@@ -263,8 +263,8 @@ void TalonSparkSwerveModule::LogSteerInfo(frc::sysid::SysIdRoutineLog::MotorLog 
   log
     .voltage(units::volt_t{steerMotor.GetBusVoltage()} * steerMotor.GetAppliedOutput())
     .current(units::ampere_t(steerMotor.GetOutputCurrent()))
-    .position(units::turn_t{steerEncoder.GetPosition() * kInvSteerFeedbackScale})
-    .velocity(units::turns_per_second_t{steerEncoder.GetVelocity() * kInvSteerFeedbackScale});
+    .position(units::turn_t{steerEncoder.GetPosition()})
+    .velocity(units::turns_per_second_t{steerEncoder.GetVelocity()});
 }
 
 void TalonSparkSwerveModule::SetDriveVoltage(units::volt_t voltage) {

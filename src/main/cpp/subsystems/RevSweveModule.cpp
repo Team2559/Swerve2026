@@ -49,19 +49,19 @@ RevSwerveModule::RevSwerveModule(int driveCanID, int steerCanID, units::angle::t
       .Inverted(kSteerMotorInverted);
 
     steerConfig.encoder
-      .PositionConversionFactor(kSteerFeedbackScale / kSteerGearRatio)
-      .VelocityConversionFactor(kSteerFeedbackScale / kSteerGearRatio * (1.0_s / 1.0_min));
+      .PositionConversionFactor(1.00 / kSteerGearRatio)
+      .VelocityConversionFactor(1.0 / kSteerGearRatio * (1.0_s / 1.0_min));
 
     steerConfig.absoluteEncoder
       .ZeroOffset(wrapOffset(offset).value())
       .Inverted(kSteerSensorInverted)
-      .PositionConversionFactor(kSteerFeedbackScale)
-      .VelocityConversionFactor(kSteerFeedbackScale * (1.0_s / 1.0_min));
+      .PositionConversionFactor(1.0)
+      .VelocityConversionFactor(1.0_s / 1.0_min);
 
     steerConfig.closedLoop
       .SetFeedbackSensor(FeedbackSensor::kAbsoluteEncoder)
       .PositionWrappingEnabled(true)
-      .PositionWrappingInputRange(-0.5 * kSteerFeedbackScale, 0.5 * kSteerFeedbackScale)
+      .PositionWrappingInputRange(-0.5, 0.5)
       .Pid(SteerPID::kP, SteerPID::kI, SteerPID::kD);
 
     steerMotor.Configure(steerConfig, rev::ResetMode::kResetSafeParameters, rev::PersistMode::kNoPersistParameters);
@@ -158,11 +158,11 @@ void RevSwerveModule::SetSteerOffset(units::angle::turn_t offset) {
 }
 
 units::angle::turn_t RevSwerveModule::GetSteerPosition() {
-  return units::angle::turn_t{steerEncoder.GetPosition() * kInvSteerFeedbackScale};
+  return units::angle::turn_t{steerEncoder.GetPosition()};
 }
 
 void RevSwerveModule::SetSteerPosition(units::angle::turn_t position) {
-  steerMotor.GetClosedLoopController().SetSetpoint(position.value() * kSteerFeedbackScale, SparkFlex::ControlType::kPosition);
+  steerMotor.GetClosedLoopController().SetSetpoint(position.value(), SparkFlex::ControlType::kPosition);
 }
 
 void RevSwerveModule::StopSteer() {
