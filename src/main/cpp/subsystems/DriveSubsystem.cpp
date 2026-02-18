@@ -280,7 +280,7 @@ void DriveSubsystem::UpdateVisionPose(frc::Pose3d measurement, units::millisecon
 
 std::unique_ptr<frc2::sysid::SysIdRoutine> DriveSubsystem::SteerSysId() {
   return std::make_unique<frc2::sysid::SysIdRoutine>(
-    frc2::sysid::Config{{}, 3_V, {}, nullptr},
+    frc2::sysid::Config{{}, {}, {}, nullptr},
     frc2::sysid::Mechanism{
       [this](units::volt_t steerVoltage) {
         frontLeftModule->SetSteerVoltage(steerVoltage);
@@ -301,7 +301,7 @@ std::unique_ptr<frc2::sysid::SysIdRoutine> DriveSubsystem::SteerSysId() {
 
 std::unique_ptr<frc2::sysid::SysIdRoutine> DriveSubsystem::DriveSysId() {
   return std::make_unique<frc2::sysid::SysIdRoutine>(
-    frc2::sysid::Config{{}, 3_V, {}, nullptr},
+    frc2::sysid::Config{{}, {}, {}, nullptr},
     frc2::sysid::Mechanism{
       [this](units::volt_t driveVoltage) {
         this->SteerTo(1.0_mps, 0.0_mps, 0.0_rad_per_s, false);

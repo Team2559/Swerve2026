@@ -49,7 +49,7 @@ std::vector<std::pair<uint, std::unique_ptr<frc2::Command>>> SysIdChooser::Expan
     vec.emplace_back(id + (uint)SysIdSubroutine::kQuasistaticForward, routine->Quasistatic(frc2::sysid::Direction::kForward).Unwrap());
     vec.emplace_back(id + (uint)SysIdSubroutine::kQuasistaticReverse, routine->Quasistatic(frc2::sysid::Direction::kReverse).Unwrap());
     vec.emplace_back(id + (uint)SysIdSubroutine::kDynamicForward, routine->Dynamic(frc2::sysid::Direction::kForward).Unwrap());
-    vec.emplace_back(id + (uint)SysIdSubroutine::kDynamicForward, routine->Dynamic(frc2::sysid::Direction::kReverse).Unwrap());
+    vec.emplace_back(id + (uint)SysIdSubroutine::kDynamicReverse, routine->Dynamic(frc2::sysid::Direction::kReverse).Unwrap());
     id += 4;
   }
 
@@ -67,7 +67,7 @@ std::vector<std::pair<std::string, uint>> SysIdChooser::ExpandRoutineChoices(
     vec.emplace_back(routine_name + " Quasistatic Forward", id + (uint)SysIdSubroutine::kQuasistaticForward);
     vec.emplace_back(routine_name + " Quasistatic Reverse", id + (uint)SysIdSubroutine::kQuasistaticReverse);
     vec.emplace_back(routine_name + " Dynamic Forward", id + (uint)SysIdSubroutine::kDynamicForward);
-    vec.emplace_back(routine_name + " Dynamic Reverse", id + (uint)SysIdSubroutine::kDynamicForward);
+    vec.emplace_back(routine_name + " Dynamic Reverse", id + (uint)SysIdSubroutine::kDynamicReverse);
     id += 4;
   }
 
