@@ -37,10 +37,10 @@ namespace DriveConstants {
   inline constexpr units::meter_t kWheelbaseLength = 24.75_in;
 
   // Zero positions for the steer of the swerve modules
-  inline constexpr units::degree_t kFrontLeftSteerOffset = 17.2_deg;
-  inline constexpr units::degree_t kFrontRightSteerOffset = 89.2_deg;
-  inline constexpr units::degree_t kRearLeftSteerOffset = 325.6_deg;
-  inline constexpr units::degree_t kRearRightSteerOffset = 244.4_deg;
+  inline constexpr units::degree_t kFrontLeftSteerOffset = 0.49025878_tr;
+  inline constexpr units::degree_t kFrontRightSteerOffset = 0.518524759_tr;
+  inline constexpr units::degree_t kRearLeftSteerOffset = 0.12443335_tr;
+  inline constexpr units::degree_t kRearRightSteerOffset = 0.8770286_tr;
 
   constexpr frc::DCMotor driveMotorPlant = frc::DCMotor::KrakenX60();
   constexpr frc::DCMotor steerMotorPlant = frc::DCMotor::NEO();
@@ -126,10 +126,10 @@ namespace DriveConstants {
 
   // Closed loop feedback parameters for module steer position
   namespace SteerPID {
-    constexpr double kP = 0.8;
+    constexpr double kP = 12.0;
     constexpr double kI = 0.0;
-    constexpr double kD = 0.03;
-    constexpr double kS = 0.0;
+    constexpr double kD = 25.0;
+    constexpr double kS = 0.0088207;
   } // namespace SteerPID
 
   // Closed loop feedback for chassis translation
