@@ -157,7 +157,7 @@ void DriveSubsystem::TestInit() {
   rearLeftModule->TestInit("Rear left");
   rearRightModule->TestInit("Rear right");
 
-  m_sysIdChooser = {std::pair{std::string{"Steer"}, SteerSysId()}, std::pair{std::string{"Drive"}, DriveSysId()}};
+  m_sysIdChooser = SysIdChooser{std::pair{std::string{"Steer"}, SteerSysId()}, std::pair{std::string{"Drive"}, DriveSysId()}};
 
   frc::SmartDashboard::PutData("Drive Setup/SysId", &m_sysIdChooser.value());
 }
@@ -170,10 +170,7 @@ void DriveSubsystem::TestExit() {
 }
 
 void DriveSubsystem::ResetFieldOrientation(bool inverted) {
-  m_poseEstimator.ResetPose(frc::Pose3d(
-    GetPose().Translation(),
-    inverted ? frc::Rotation3d(frc::Rotation2d(180_deg)) : frc::Rotation3d()
-  ));
+  m_poseEstimator.ResetPose(frc::Pose3d(GetPose().Translation(), inverted ? frc::Rotation3d(frc::Rotation2d(180_deg)) : frc::Rotation3d()));
 }
 
 void DriveSubsystem::Drive(units::meters_per_second_t xSpeed, units::meters_per_second_t ySpeed, units::radians_per_second_t rot, bool fieldRelative, units::meter_t x_center, units::meter_t y_center) {

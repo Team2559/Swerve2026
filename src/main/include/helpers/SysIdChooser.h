@@ -12,6 +12,7 @@
 
 #include <memory>
 #include <string>
+#include <utility>
 #include <vector>
 
 enum class SysIdSubroutine {
@@ -24,7 +25,7 @@ enum class SysIdSubroutine {
 class SysIdChooser : public wpi::Sendable {
 public:
   template <std::convertible_to<std::unique_ptr<frc2::sysid::SysIdRoutine>>... SysIdRoutinePtrs>
-  SysIdChooser(std::pair<std::string, SysIdRoutinePtrs> &&...routines) {
+  explicit SysIdChooser(std::pair<std::string, SysIdRoutinePtrs> &&...routines) {
     std::vector<std::string> routine_names{};
 
     (routine_names.push_back(routines.first), ...);
