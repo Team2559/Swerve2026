@@ -278,6 +278,15 @@ void DriveSubsystem::UpdateVisionPose(frc::Pose3d measurement, units::millisecon
   m_poseEstimator.AddVisionMeasurement(measurement, timestamp, {0.5, 0.5, 0.5, 0.8});
 }
 
+frc::ChassisSpeeds DriveSubsystem::GetChassisSpeeds() {
+  return kDriveKinematics.ToChassisSpeeds({
+    frontLeftModule->GetState(),
+    frontRightModule->GetState(),
+    rearLeftModule->GetState(),
+    rearRightModule->GetState(),
+  });
+}
+
 std::unique_ptr<frc2::sysid::SysIdRoutine> DriveSubsystem::SteerSysId() {
   return std::make_unique<frc2::sysid::SysIdRoutine>(
     frc2::sysid::Config{{}, {}, {}, nullptr},

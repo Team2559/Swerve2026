@@ -102,6 +102,11 @@ public:
   void UpdateVisionPose(frc::Pose3d measurement, units::millisecond_t timestamp);
 
   /**
+   * Gets the robot's current velocity (in translation and rotation)
+   */
+  frc::ChassisSpeeds GetChassisSpeeds();
+
+  /**
    * Get the current steer angle and wheel positions for all modules for odometry
    */
   const std::array<frc::SwerveModulePosition, 4> GetModulePositions();
