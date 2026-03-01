@@ -121,7 +121,7 @@ namespace DriveConstants {
     constexpr double kI = 0.0;
     constexpr double kD = 0.006;
     constexpr double kS = 0.0;
-    constexpr double kV = (1.0 / driveMotorPlant.Kv).value();
+    constexpr double kV = (1.0 / driveMotorPlant.Kv / kDriveDistancePerRotation).value();
   } // namespace DrivePID
 
   // Closed loop feedback parameters for module steer position
