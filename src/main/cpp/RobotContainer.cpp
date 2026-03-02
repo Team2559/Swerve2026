@@ -5,6 +5,7 @@
 #include "RobotContainer.h"
 
 #include <frc/DriverStation.h>
+#include <frc/Filesystem.h>
 #include <frc/livewindow/LiveWindow.h>
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <frc2/command/InstantCommand.h>
@@ -12,6 +13,7 @@
 #include <frc2/command/StartEndCommand.h>
 #include <frc2/command/button/RobotModeTriggers.h>
 #include <frc2/command/button/Trigger.h>
+#include <wpinet/WebServer.h>
 
 #include <tuple>
 
@@ -25,6 +27,9 @@ RobotContainer::RobotContainer() :
         m_driveSubsystem.UpdateVisionPose(measurement, timestamp);
       }
     ) {
+  // Start Elastic remote layout server
+  wpi::WebServer::GetInstance().Start(5800, frc::filesystem::GetDeployDirectory());
+
   // Initialize all of your commands and subsystems here
 
   m_driveSubsystem.SetDefaultCommand(
