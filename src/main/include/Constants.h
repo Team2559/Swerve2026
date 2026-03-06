@@ -37,10 +37,10 @@ namespace DriveConstants {
   inline constexpr units::meter_t kWheelbaseLength = 24.75_in;
 
   // Zero positions for the steer of the swerve modules
-  inline constexpr units::degree_t kFrontLeftSteerOffset = 0.49025878_tr;
-  inline constexpr units::degree_t kFrontRightSteerOffset = 0.518524759_tr;
-  inline constexpr units::degree_t kRearLeftSteerOffset = 0.12443335_tr;
-  inline constexpr units::degree_t kRearRightSteerOffset = 0.8770286_tr;
+  inline constexpr units::degree_t kFrontLeftSteerOffset = 0.99025878_tr;
+  inline constexpr units::degree_t kFrontRightSteerOffset = 0.018524759_tr;
+  inline constexpr units::degree_t kRearLeftSteerOffset = 0.62443335_tr;
+  inline constexpr units::degree_t kRearRightSteerOffset = 0.3770286_tr;
 
   constexpr frc::DCMotor driveMotorPlant = frc::DCMotor::KrakenX60();
   constexpr frc::DCMotor steerMotorPlant = frc::DCMotor::NEO();
