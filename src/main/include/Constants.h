@@ -60,7 +60,7 @@ namespace DriveConstants {
   // Nominal Wheel Circumference (pi * Diameter): ~0.3192m;
   // 0.3192 / 5.90 => ~0.05401.
 
-  inline constexpr double kDriveGearRatio = 50.0 / 17.0 * 17.0 / 27.0 * 45.0 / 15.0; // approx 6.75
+  inline constexpr double kDriveGearRatio = 50.0 / 14.0 * 17.0 / 27.0 * 45.0 / 15.0; // approx 6.75
 
   // This should be empirically determined!  This is just an initial guess.
   // This is used for both distance and velocity control. If this is off, it
