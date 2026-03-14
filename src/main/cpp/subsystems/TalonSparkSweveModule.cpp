@@ -29,7 +29,7 @@ TalonSparkSwerveModule::TalonSparkSwerveModule(int driveCanID, int steerCanID, u
     using namespace ctre::phoenix6::signals;
     TalonFXConfiguration driveConfig;
     driveConfig.CurrentLimits
-      .WithStatorCurrentLimit(50.0_A)
+      .WithStatorCurrentLimit(80.0_A)
       .WithSupplyCurrentLimit(50.0_A)
       .WithSupplyCurrentLowerLimit(40.0_A);
     driveConfig.MotorOutput
