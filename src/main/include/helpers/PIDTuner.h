@@ -4,7 +4,6 @@
 
 #pragma once
 
-#include <rev/config/SparkBaseConfig.h>
 #include <wpi/sendable/Sendable.h>
 #include <wpi/sendable/SendableBuilder.h>
 #include <wpi/sendable/SendableHelper.h>
